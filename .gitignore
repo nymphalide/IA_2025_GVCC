@@ -1,14 +1,65 @@
-# Python
-__pycache__/
-*.pyc
-/backend/venv/
+###########################
+# General Project Structure
+###########################
+# Windows Files
+Thumbs.db
+Desktop.ini
+.DS_Store
 
-# IDE (PyCharm)
+##########################################
+# 1. Python Environment and Artifacts (Backend)
+##########################################
+
+# Virtual Environments (Venv location is crucial here)
+/backend/venv/
+.venv
+*.env
+*.pyc
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+
+# Setup/Packaging Files
+/dist/
+/build/
+*.egg-info/
+.coverage
+
+########################################
+# 2. IDE / Tooling Files (PyCharm, WebStorm, VS Code)
+########################################
+
+# PyCharm / WebStorm / General JetBrains Files
 .idea/
-*.iws
 *.iml
 *.ipr
+*.iws
 
-# Node / Frontend
+# Visual Studio Code Files
+.vscode/
+
+# History files (e.g., used by PyCharm/WebStorm for local history)
+.history/
+
+########################################
+# 3. Node / Frontend (React)
+########################################
+
+# Dependency directory
 /frontend/node_modules/
+
+# Production / Build folder
 /frontend/dist/
+/frontend/build/
+/frontend/out/
+
+# Lock Files (only ignore if not standardizing)
+# If the team standardizes on 'npm', you would commit 'package-lock.json'
+# We ignore error logs and temporary caches
+/frontend/npm-debug.log
+/frontend/yarn-error.log
+/frontend/.cache/
+/frontend/tmp/
