@@ -1,0 +1,23 @@
+# docker-compose.yml
+
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: smar_test_backend
+    ports:
+      - "8000:8000"  # Backend-ul se va accesa pe localhost:8000
+    volumes:
+      - ./backend:/app
+    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
+  
+  # Placeholder pentru serviciul Frontend
+  # Membrul 2 va completa acest bloc
+  frontend:
+    container_name: smar_test_frontend_placeholder
+    image: busybox/placeholder 
+    ports:
+      - "3000:3000"
