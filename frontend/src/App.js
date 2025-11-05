@@ -108,7 +108,16 @@ function App() {
             {/* --- Secțiunea 2: Afișare Problemă (dacă există) --- */}
             {problem && (
                 <div className="container">
-                    <h2>Problemă Generată (Seed: {problem.seed})</h2>
+
+                    <h2>Problemă MinMax cu Pruning Alpha-Beta</h2>
+                    <p className="problem-statement">
+                        Se consideră arborele de mai jos, în care nodurile frunză au valori numerice,
+                        iar celelalte noduri sunt de tip MAX sau MIN.
+                        Determinați valoarea calculată în rădăcina arborelui și
+                        numărul de noduri frunză evaluate în timpul procesului
+                        de parcurgere folosind algoritmul Alpha-Beta Pruning.
+                    </p>
+
                     {/* Spoiler JSON */}
                     <div className="json-toggle">
                         <button
@@ -145,8 +154,8 @@ function App() {
 
 
                     {/* --- Secțiunea 3: Formular Răspuns --- */}
-                    <form onSubmit={handleSubmit}>
-                        <div className="form-group">
+                    <form onSubmit={handleSubmit} className="form-inline">
+                        <div className="form-group-inline">
                             <label htmlFor="root_value">Valoarea calculată în rădăcină (R):</label>
                             <input
                                 type="number"
@@ -157,7 +166,7 @@ function App() {
                                 required
                             />
                         </div>
-                        <div className="form-group">
+                        <div className="form-group-inline">
                             <label htmlFor="visited_nodes">Numărul de noduri frunză vizitate:</label>
                             <input
                                 type="number"
@@ -172,6 +181,7 @@ function App() {
                             {isLoading ? 'Se evaluează...' : 'Evaluează Răspuns'}
                         </button>
                     </form>
+
                 </div>
             )}
 

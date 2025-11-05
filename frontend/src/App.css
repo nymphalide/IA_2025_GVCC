@@ -138,3 +138,30 @@ pre {
   max-height: 300px;
   overflow-y: auto;
 }
+
+.form-inline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap; /* ca să se așeze frumos pe ecrane mici */
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.form-group-inline {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.form-group-inline label {
+  margin-bottom: 4px;
+  font-weight: 500;
+}
+
+.form-group-inline input {
+  width: 180px;
+  padding: 6px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+}
