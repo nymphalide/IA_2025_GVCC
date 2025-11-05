@@ -108,3 +108,33 @@ pre {
   color: #dc3545;
   font-weight: bold;
 }
+
+.json-toggle {
+  margin-top: 10px;
+}
+
+.json-button {
+  background-color: #444;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.json-button:hover {
+  background-color: #666;
+}
+
+.json-viewer {
+  background: #f4f4f4;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 8px;
+  margin-top: 8px;
+  text-align: left;
+  font-family: monospace;
+  max-height: 300px;
+  overflow-y: auto;
+}

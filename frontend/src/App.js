@@ -15,6 +15,8 @@ function App() {
     // Starea pentru încărcare și erori
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [showJson, setShowJson] = useState(false);
+
 
     /**
      * Apelată la apăsarea butonului "Generează Problemă".
@@ -107,9 +109,22 @@ function App() {
             {problem && (
                 <div className="container">
                     <h2>Problemă Generată (Seed: {problem.seed})</h2>
-                    <p>Arborele generat (Nodurile frunză au valori, restul sunt 'null'):</p>
-                    {/* Afișăm arborele ca JSON formatat */}
-                    <pre>{JSON.stringify(problem.tree, null, 2)}</pre>
+                    {/* Spoiler JSON */}
+                    <div className="json-toggle">
+                        <button
+                            type="button"
+                            onClick={() => setShowJson(prev => !prev)}
+                            className="json-button"
+                        >
+                            {showJson ? 'Ascunde JSON' : 'Arată JSON'}
+                        </button>
+
+                        {showJson && (
+                            <pre className="json-viewer">
+                                {JSON.stringify(problem.tree, null, 2)}
+                            </pre>
+                        )}
+                    </div>
 
                     {/* 🔹 Afișează imaginea arborelui */}
                     {problem.tree_image_base64 && (
