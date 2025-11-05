@@ -1,23 +1,52 @@
-# docker-compose.yml
-
 version: '3.8'
 
 services:
-  backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
-    container_name: smar_test_backend
-    ports:
-      - "8000:8000"  # Backend-ul se va accesa pe localhost:8000
+  db:
+    image: postgres:14-alpine
+    container_name: smar_test_db
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: smartest
     volumes:
-      - ./backend:/app
-    command: uvicorn main:app --host 0.0.0.0 --port 8000 --reload
-  
-  # Placeholder pentru serviciul Frontend
-  # Membrul 2 va completa acest bloc
-  frontend:
-    container_name: smar_test_frontend_placeholder
-    image: busybox/placeholder 
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d smartest"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  api:
+    build: ./backend
+    container_name: smar_test_api
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+    volumes:
+      - ./backend/app:/app/app
+      - ./backend/tests:/app/tests
+    ports:
+      - "8000:8000"
+    environment:
+      # Link către containerul de DB (numele serviciului 'db')
+      DATABASE_URL: "postgresql://admin:admin@db:5432/smartest"
+    depends_on:
+      db:
+        condition: service_healthy
+
+  ui:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: smar_test_ui
     ports:
       - "3000:3000"
+    volumes:
+      - ./frontend/src:/app/src
+    stdin_open: true
+    tty: true
+    depends_on:
+      - api
+
+volumes:
+  postgres_data:

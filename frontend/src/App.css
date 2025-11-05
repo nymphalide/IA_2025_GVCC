@@ -1,0 +1,110 @@
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  background-color: #f4f7f6;
+  color: #333;
+  margin: 0;
+  padding: 20px;
+}
+
+.App {
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background-color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.container {
+  margin-bottom: 25px;
+}
+
+h1 {
+  color: #005f73;
+  border-bottom: 2px solid #005f73;
+  padding-bottom: 10px;
+}
+
+h2 {
+  color: #0a9396;
+  margin-top: 20px;
+}
+
+button {
+  background-color: #005f73;
+  color: white;
+  border: none;
+  padding: 12px 20px;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+  margin-right: 10px;
+}
+
+button:hover {
+  background-color: #0a9396;
+}
+
+button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+/* Stilizare simplă pentru JSON */
+pre {
+  background-color: #e9ecef;
+  padding: 15px;
+  border-radius: 5px;
+  overflow-x: auto;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+/* Formular */
+.form-group {
+  margin: 15px 0;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group input {
+  width: 200px;
+  padding: 8px;
+  font-size: 16px;
+  border-radius: 4px;
+  border: 1px solid #ced4da;
+}
+
+/* Rezultate */
+.result {
+  padding: 15px;
+  border-radius: 5px;
+  margin-top: 20px;
+}
+
+.result-success {
+  background-color: #d1e7dd;
+  border: 1px solid #a3cfbb;
+  color: #0f5132;
+}
+
+.result-fail {
+  background-color: #f8d7da;
+  border: 1px solid #f1aeb5;
+  color: #58151c;
+}
+
+.result-partial {
+  background-color: #fff3cd;
+  border: 1px solid #ffe69c;
+  color: #664d03;
+}
+
+.error {
+  color: #dc3545;
+  font-weight: bold;
+}
