@@ -3,6 +3,8 @@ from app.logic.seed_generator import get_new_seed
 from app.logic.minmax_solver import generate_and_solve_minmax
 from app.schemas.minmax_schemas import MinMaxProblemResponse
 
+from app.logic.tree_visualizer import generate_tree_image_base64
+
 router = APIRouter()
 
 @router.post("/generate/minmax", response_model=MinMaxProblemResponse)
@@ -24,10 +26,13 @@ async def generate_minmax_problem():
         depth=3, # Adâncime standard pentru L6
         breadth=2  # Lățime standard
     )
-    
+
+    tree_image_b64 = generate_tree_image_base64(tree_structure.model_dump())
+
     # 3. Returnează problema
     return MinMaxProblemResponse(
         seed=new_seed,
         tree=tree_structure,
-        difficulty="EASY_L6"
+        difficulty="EASY_L6",
+        tree_image_base64=tree_image_b64
     )

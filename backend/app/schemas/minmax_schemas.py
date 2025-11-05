@@ -18,6 +18,7 @@ class MinMaxProblemResponse(BaseModel):
     seed: int
     tree: MinMaxNode
     difficulty: str = "EASY" # Placeholder pentru viitor
+    tree_image_base64: Optional[str] = None
 
     class Config:
         orm_mode = True # Permite maparea la modele ORM (dacă e cazul)

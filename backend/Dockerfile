@@ -10,6 +10,8 @@ ENV PYTHONUNBUFFERED 1
 # Setează directorul de lucru în container
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y graphviz && apt-get clean
+
 # Copiază fișierul de dependențe și le instalează
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt

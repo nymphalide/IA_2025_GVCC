@@ -3,12 +3,26 @@ from fastapi.middleware.cors import CORSMiddleware
 from app.api import generation, evaluation
 from app.db import database
 from sqlalchemy import text # <--- 1. ADaugă ACEST IMPORT
+from fastapi.middleware.cors import CORSMiddleware
 
 # Crearea instanței aplicației FastAPI
 app = FastAPI(
     title="SmarTest AI Project",
     description="API pentru generarea și evaluarea problemelor de IA (L6 - MinMax)",
     version="0.1.0"
+)
+
+origins = [
+    "http://localhost:3000",  # frontend React
+    "http://127.0.0.1:3000",  # fallback pentru macOS / alte setup-uri
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,           # cine are voie să facă request-uri
+    allow_credentials=True,
+    allow_methods=["*"],             # GET, POST, etc.
+    allow_headers=["*"],             # toate headerele
 )
 
 # Configurare CORS
