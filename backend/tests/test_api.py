@@ -2,6 +2,9 @@ import pytest
 from fastapi.testclient import TestClient
 from app.main import app
 
+# Importăm solver-ul pentru a obține soluția corectă
+from app.logic.minmax_solver import generate_and_solve_minmax as get_correct_solution
+
 # Creăm un client de test pentru API
 client = TestClient(app)
 
@@ -16,35 +19,47 @@ def test_generate_endpoint():
     assert "tree" in data
     assert data["tree"]["name"] == "R" # Verificăm dacă rădăcina se numește 'R'
     assert "difficulty" in data
+    assert "L6_Depth" in data["difficulty"] # Verifică formatul nou (L6_Depth4)
 
 def test_evaluate_endpoint():
-    """Test 3 (Endpoint): Verifică fluxul complet (generate + evaluate)."""
+    """Test 3 (Endpoint): Verifică fluxul complet (MODIFICAT PENTRU STRUCTURĂ DINAMICĂ)."""
     
-    # Pas 1: Generăm o problemă folosind un seed CUNOSCUT (din test_minmax_solver)
-    # Pentru a face asta, "păcălim" API-ul suprascriind dependența get_new_seed
-    # (Metodă mai avansată)
+    TEST_SEED = 42
     
-    # Pentru L6, testăm mai simplu: folosim seed-ul 42
-    # știm că răspunsul corect este val=13, nodes=5
+    # --- ÎNAINTE DE TEST ---
+    # Trebuie să aflăm răspunsul corect pentru TEST_SEED (42)
+    # Apelăm solver-ul direct, așa cum o fac și endpoint-urile
     
-    test_payload = {
-        "problem_seed": 42,
-        "root_value": 13, # Răspuns corect
-        "visited_nodes": 5  # Răspuns corect
+    _, correct_val, correct_nodes, correct_depth = get_correct_solution(
+        seed=TEST_SEED
+    )
+    
+    # Conform testului unitar (seed=42):
+    # correct_val = 10
+    # correct_nodes = 8
+    
+    # --- START TEST ---
+    
+    # Pas 1: Testăm un răspuns corect (cu valorile dinamice calculate)
+    test_payload_correct = {
+        "problem_seed": TEST_SEED,
+        "root_value": correct_val,
+        "visited_nodes": correct_nodes
     }
     
-    response = client.post("/api/evaluate/minmax", json=test_payload)
+    response_correct = client.post("/api/evaluate/minmax", json=test_payload_correct)
     
-    assert response.status_code == 200
-    data = response.json()
-    assert data["percentage"] == 100
-    assert data["correct_answer"]["root_value"] == 13
+    assert response_correct.status_code == 200
+    data_correct = response_correct.json()
+    assert data_correct["percentage"] == 100
+    assert data_correct["correct_answer"]["root_value"] == correct_val
+    assert data_correct["correct_answer"]["visited_nodes"] == correct_nodes
     
-    # Testăm un răspuns greșit
+    # Pas 2: Testăm un răspuns greșit
     test_payload_wrong = {
-        "problem_seed": 42,
-        "root_value": 99, # Greșit
-        "visited_nodes": 99 # Greșit
+        "problem_seed": TEST_SEED,
+        "root_value": 999, # Greșit
+        "visited_nodes": -1 # Greșit
     }
     
     response_wrong = client.post("/api/evaluate/minmax", json=test_payload_wrong)
@@ -52,3 +67,4 @@ def test_evaluate_endpoint():
     data_wrong = response_wrong.json()
     assert data_wrong["percentage"] == 0
     assert "Valoarea rădăcinii este greșită" in data_wrong["explanation"]
+    assert f"Corect: {correct_val}" in data_wrong["explanation"]
