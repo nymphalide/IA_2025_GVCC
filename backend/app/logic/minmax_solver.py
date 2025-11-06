@@ -1,7 +1,14 @@
 import random
 from app.logic.seed_generator import set_seed
 from app.schemas.minmax_schemas import MinMaxNode
-from typing import Tuple, List, Optional # <--- LINIA ACEASTA A FOST ADĂUGATĂ/MODIFICATĂ
+from typing import Tuple, List, Optional
+# --- ADĂUGAT: Importăm limitele de configurare ---
+from app.logic.difficulty_config import (
+    MINMAX_L6_MIN_DEPTH,
+    MINMAX_L6_MAX_DEPTH,
+    MINMAX_L6_MIN_BREADTH,
+    MINMAX_L6_MAX_BREADTH
+)
 
 # Variabilă globală pentru a număra nodurile frunză vizitate
 # Resetată la fiecare apel principal
@@ -14,8 +21,11 @@ class SolverNode:
         self.value = value
         self.children = children if children else []
 
-def _generate_tree_recursive(depth: int, max_depth: int, breadth: int, name_prefix: str) -> SolverNode:
-    """Funcție recursivă internă pentru generarea arborelui."""
+def _generate_tree_recursive(depth: int, max_depth: int, name_prefix: str) -> SolverNode: # <-- MODIFICAT: Am scos 'breadth'
+    """
+    Funcție recursivă internă pentru generarea arborelui.
+    Lățimea (breadth) este determinată aleatoriu la fiecare nod.
+    """
     
     # Cazul de bază: am ajuns la adâncimea maximă (frunză)
     if depth == max_depth:
@@ -24,9 +34,16 @@ def _generate_tree_recursive(depth: int, max_depth: int, breadth: int, name_pref
     
     # Cazul recursiv: nod intern
     children = []
-    for i in range(breadth):
+    
+    # --- MODIFICARE CHEIE ---
+    # Fiecare nod își alege propria lățime (nr. de copii)
+    # Deoarece seed-ul a fost setat în funcția publică, 
+    # acest apel este determinist și reproductibil.
+    current_node_breadth = random.randint(MINMAX_L6_MIN_BREADTH, MINMAX_L6_MAX_BREADTH)
+    
+    for i in range(current_node_breadth): # <-- Folosim lățimea aleatorie a nodului curent
         child_name = f"{name_prefix}{i+1}"
-        child_node = _generate_tree_recursive(depth + 1, max_depth, breadth, child_name)
+        child_node = _generate_tree_recursive(depth + 1, max_depth, child_name) # <-- Apel recursiv fără 'breadth'
         children.append(child_node)
         
     return SolverNode(name=name_prefix, children=children)
@@ -44,14 +61,17 @@ def _convert_to_schema(node: SolverNode) -> MinMaxNode:
 def _alpha_beta(node: SolverNode, depth: int, alpha: float, beta: float, is_maximizing_player: bool) -> int:
     """
     Implementarea algoritmului MinMax cu tăieri Alpha-Beta.
-    Complexitate Timp: O(b^d) (worst case), O(b^(d/2)) (best case / average)
-    Complexitate Spațiu: O(d) (datorită stivei de recursivitate)
+    (Funcția aceasta rămâne neschimbată)
     """
     global leaf_nodes_visited_count
 
-    # Cazul de bază: am ajuns la o frunză sau adâncime maximă
+    # Cazul de bază: am ajuns la o frunză
     if not node.children:
         leaf_nodes_visited_count += 1
+        # Asigurare: Dacă arborele are adâncimea 0 (doar rădăcină), 
+        # ceea ce nu se întâmplă cu D>=3, dar e bine de avut
+        if node.value is None:
+             return 0 # Sau o altă valoare de fallback
         return node.value
 
     if is_maximizing_player:
@@ -73,21 +93,35 @@ def _alpha_beta(node: SolverNode, depth: int, alpha: float, beta: float, is_maxi
 
 # --- Funcția Publică ---
 
-def generate_and_solve_minmax(seed: int, depth: int = 3, breadth: int = 2) -> Tuple[MinMaxNode, int, int]:
+# MODIFICAT: Semnătura s-a schimbat. 
+# Nu mai acceptăm depth/breadth, le determinăm intern.
+# Returnăm (schema, valoare, noduri, adâncimea_aleasă)
+def generate_and_solve_minmax(seed: int) -> Tuple[MinMaxNode, int, int, int]:
     """
-    Generează un arbore MinMax și îl rezolvă folosind Alpha-Beta.
-    Returnează: (Structura Arborelui (schema), Valoarea Rădăcină, Noduri Frunză Vizitate)
+    Generează un arbore MinMax cu structură (adâncime și lățime) aleatorie
+    și îl rezolvă folosind Alpha-Beta.
+    
+    Returnează: (Structura Arborelui (schema), Valoarea Rădăcină, Noduri Frunză Vizitate, Adâncimea Aleasă)
     """
     global leaf_nodes_visited_count
     
     # 1. Asigură Reproductibilitatea
     set_seed(seed)
     
-    # 2. Generează structura internă a arborelui
-    # (Adâncimea 3 și lățimea 2 rezultă în 2^3 = 8 frunze)
-    internal_tree = _generate_tree_recursive(depth=0, max_depth=depth, breadth=breadth, name_prefix="R")
+    # 2. Determină aleatoriu structura (bazat pe seed)
+    # Acesta este primul apel random după set_seed()
+    chosen_depth = random.randint(MINMAX_L6_MIN_DEPTH, MINMAX_L6_MAX_DEPTH)
     
-    # 3. Resetează contorul și Rezolvă
+    # 3. Generează structura internă a arborelui
+    # Următoarele apeluri random vor fi în interiorul _generate_tree_recursive
+    # pentru lățimi (breadth) și valori frunze.
+    internal_tree = _generate_tree_recursive(
+        depth=0, 
+        max_depth=chosen_depth, 
+        name_prefix="R"
+    )
+    
+    # 4. Resetează contorul și Rezolvă
     leaf_nodes_visited_count = 0
     root_value = _alpha_beta(
         node=internal_tree, 
@@ -97,7 +131,8 @@ def generate_and_solve_minmax(seed: int, depth: int = 3, breadth: int = 2) -> Tu
         is_maximizing_player=True # Rădăcina este MAX
     )
     
-    # 4. Convertește arborele la formatul Pydantic (pentru JSON)
+    # 5. Convertește arborele la formatul Pydantic (pentru JSON)
     schema_tree = _convert_to_schema(internal_tree)
     
-    return (schema_tree, root_value, leaf_nodes_visited_count)
+    # Returnăm și adâncimea aleasă, pentru a fi afișată în API
+    return (schema_tree, root_value, leaf_nodes_visited_count, chosen_depth)
