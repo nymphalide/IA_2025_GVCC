@@ -1,0 +1,28 @@
+.nash-container {
+    max-width: 800px;
+    margin: 40px auto;
+    text-align: center;
+}
+
+.nash-container .placeholder-content {
+    background-color: #f0f8ff; /* AliceBlue */
+    border: 2px dashed #87cefa;
+    padding: 40px;
+    border-radius: 10px;
+    color: #444;
+}
+
+.nash-container ul {
+    text-align: left;
+    display: inline-block;
+    margin: 20px 0;
+}
+
+.mock-matrix {
+    margin-top: 20px;
+    padding: 20px;
+    background: white;
+    border: 1px solid #ccc;
+    font-family: monospace;
+    color: #999;
+}
