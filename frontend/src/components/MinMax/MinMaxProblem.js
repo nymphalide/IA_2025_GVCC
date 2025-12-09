@@ -3,35 +3,35 @@ import { generateMinMaxProblem, evaluateMinMaxAnswer } from '../../api/apiServic
 import './MinMax.css';
 
 function MinMaxProblem() {
-    // State for problem received from API
+    // Starea pentru problema primită de la API
     const [problem, setProblem] = useState(null); // { seed, tree }
 
-    // State for user answer
+    // Starea pentru răspunsul utilizatorului
     const [answer, setAnswer] = useState({ root_value: '', visited_nodes: '' });
 
-    // State for evaluation result
+    // Starea pentru rezultatul evaluării
     const [evaluation, setEvaluation] = useState(null); // { percentage, correct_answer, explanation }
 
-    // State for loading and errors
+    // Starea pentru încărcare și erori
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState(null);
     const [showJson, setShowJson] = useState(false);
 
     /**
-     * Called when "Generate Problem" is clicked.
+     * Apelată la apăsarea butonului "Generează Problemă".
      */
     const handleGenerate = async () => {
         setIsLoading(true);
         setError(null);
         setProblem(null);
         setEvaluation(null);
-        setAnswer({ root_value: '', visited_nodes: '' });
+        setAnswer({ root_value: '', visited_nodes: '' }); // Resetăm formularul
 
         try {
             const response = await generateMinMaxProblem();
-            setProblem(response.data);
+            setProblem(response.data); // Salvăm problema (seed + arbore)
         } catch (err) {
-            setError("Error generating problem. Is the API running? (Check console)");
+            setError("Eroare la generarea problemei. API-ul este pornit? (Verifică consola)");
             console.error(err);
         } finally {
             setIsLoading(false);
@@ -39,13 +39,13 @@ function MinMaxProblem() {
     };
 
     /**
-     * Called when answer form is submitted.
+     * Apelată la trimiterea formularului de răspuns.
      */
     const handleSubmit = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); // Oprește reîncărcarea paginii
 
         if (!problem || answer.root_value === '' || answer.visited_nodes === '') {
-            setError("You must generate a problem and fill in both fields.");
+            setError("Trebuie să generați o problemă și să completați ambele câmpuri.");
             return;
         }
 
@@ -54,6 +54,7 @@ function MinMaxProblem() {
         setEvaluation(null);
 
         try {
+            // Pregătim datele pentru API
             const answerData = {
                 problem_seed: problem.seed,
                 root_value: parseInt(answer.root_value, 10),
@@ -61,9 +62,9 @@ function MinMaxProblem() {
             };
 
             const response = await evaluateMinMaxAnswer(answerData);
-            setEvaluation(response.data);
+            setEvaluation(response.data); // Salvăm rezultatul evaluării
         } catch (err) {
-            setError("Error evaluating answer. (Check console)");
+            setError("Eroare la evaluarea răspunsului. (Verifică consola)");
             console.error(err);
         } finally {
             setIsLoading(false);
@@ -87,36 +88,36 @@ function MinMaxProblem() {
 
     return (
         <div className="minmax-container">
-            <h1>Demo Deliverable L6 - MinMax with Alpha-Beta</h1>
+            <h1>Demo Livrabil L6 - MinMax cu Alpha-Beta</h1>
 
-            {/* --- Section 1: Generation --- */}
+            {/* --- Secțiunea 1: Generare --- */}
             <div className="control-panel">
                 <button onClick={handleGenerate} disabled={isLoading} className="primary-btn">
-                    {isLoading ? 'Generating...' : 'Generate MinMax Problem'}
+                    {isLoading ? 'Se generează...' : 'Generează Problemă MinMax'}
                 </button>
                 {error && <p className="error-msg">{error}</p>}
             </div>
 
-            {/* --- Section 2: Display Problem --- */}
+            {/* --- Secțiunea 2: Afișare Problemă (dacă există) --- */}
             {problem && (
                 <div className="problem-card">
-                    <h2>MinMax Problem with Alpha-Beta Pruning</h2>
+                    <h2>Problemă MinMax cu Pruning Alpha-Beta</h2>
                     <p className="problem-text">
-                        Consider the tree below, where leaf nodes have numeric values,
-                        and other nodes are MAX or MIN types.
-                        Determine the value calculated at the root and the
-                        number of leaf nodes evaluated during the traversal process
-                        using the Alpha-Beta Pruning algorithm.
+                        Se consideră arborele de mai jos, în care nodurile frunză au valori numerice,
+                        iar celelalte noduri sunt de tip MAX sau MIN.
+                        Determinați valoarea calculată în rădăcina arborelui și
+                        numărul de noduri frunză evaluate în timpul procesului
+                        de parcurgere folosind algoritmul Alpha-Beta Pruning.
                     </p>
 
-                    {/* JSON Spoiler */}
+                    {/* Spoiler JSON */}
                     <div className="json-toggle">
                         <button
                             type="button"
                             onClick={() => setShowJson(prev => !prev)}
                             className="secondary-btn"
                         >
-                            {showJson ? 'Hide JSON' : 'Show JSON'}
+                            {showJson ? 'Ascunde JSON' : 'Arată JSON'}
                         </button>
 
                         {showJson && (
@@ -126,22 +127,22 @@ function MinMaxProblem() {
                         )}
                     </div>
 
-                    {/* Tree Image */}
+                    {/* Imagine Arbore */}
                     {problem.tree_image_base64 && (
                         <div className="image-wrapper">
-                            <h3>Tree Representation:</h3>
+                            <h3>Reprezentare grafică a arborelui:</h3>
                             <img
                                 src={`data:image/png;base64,${problem.tree_image_base64}`}
-                                alt="MinMax Tree"
+                                alt="Arbore MinMax"
                                 className="tree-image"
                             />
                         </div>
                     )}
 
-                    {/* --- Section 3: Answer Form --- */}
+                    {/* --- Secțiunea 3: Formular Răspuns --- */}
                     <form onSubmit={handleSubmit} className="answer-form">
                         <div className="form-group">
-                            <label htmlFor="root_value">Calculated Root Value (R):</label>
+                            <label htmlFor="root_value">Valoarea calculată în rădăcină (R):</label>
                             <input
                                 type="number"
                                 id="root_value"
@@ -152,7 +153,7 @@ function MinMaxProblem() {
                             />
                         </div>
                         <div className="form-group">
-                            <label htmlFor="visited_nodes">Leaf Nodes Visited:</label>
+                            <label htmlFor="visited_nodes">Numărul de noduri frunză vizitate:</label>
                             <input
                                 type="number"
                                 id="visited_nodes"
@@ -163,22 +164,22 @@ function MinMaxProblem() {
                             />
                         </div>
                         <button type="submit" disabled={isLoading} className="submit-btn">
-                            {isLoading ? 'Evaluating...' : 'Evaluate Answer'}
+                            {isLoading ? 'Se evaluează...' : 'Evaluează Răspuns'}
                         </button>
                     </form>
                 </div>
             )}
 
-            {/* --- Section 4: Evaluation --- */}
+            {/* --- Secțiunea 4: Afișare Evaluare (dacă există) --- */}
             {evaluation && (
                 <div className={`evaluation-card ${getResultClass()}`}>
-                    <h2>Evaluation Result</h2>
-                    <h3>Score: {evaluation.percentage}%</h3>
-                    <p><b>Explanation:</b> {evaluation.explanation}</p>
+                    <h2>Rezultat Evaluare</h2>
+                    <h3>Scor: {evaluation.percentage}%</h3>
+                    <p><b>Explicație:</b> {evaluation.explanation}</p>
                     {evaluation.percentage < 100 && (
                         <p>
-                            <b>Correct Answer:</b> Value = {evaluation.correct_answer.root_value},
-                            Visited Nodes = {evaluation.correct_answer.visited_nodes}
+                            <b>Răspuns corect:</b> Valoare = {evaluation.correct_answer.root_value},
+                            Noduri Vizitate = {evaluation.correct_answer.visited_nodes}
                         </p>
                     )}
                 </div>

@@ -20,7 +20,7 @@ function Navbar() {
             to="/nash" 
             className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
           >
-            Nash Equilibrium
+            Echilibru Nash
           </NavLink>
         </li>
         <li>
@@ -28,7 +28,7 @@ function Navbar() {
             to="/strategy" 
             className={({ isActive }) => isActive ? "nav-link active" : "nav-link"}
           >
-            Strategy Selection
+            Alegerea Strategiei
           </NavLink>
         </li>
       </ul>

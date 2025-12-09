@@ -4,17 +4,17 @@ import './Nash.css';
 function NashProblem() {
     return (
         <div className="nash-container">
-            <h1>Game Theory: Nash Equilibrium</h1>
+            <h1>Teoria Jocurilor: Echilibru Nash</h1>
             <div className="placeholder-content">
-                <p>⚠️ <strong>Under Development</strong> (Livrabil 3)</p>
-                <p>This module will allow you to:</p>
+                <p>⚠️ <strong>În dezvoltare</strong> (Livrabil 3)</p>
+                <p>Această componentă va permite:</p>
                 <ul>
-                    <li>Generate random payoff matrices (Normal Form Games).</li>
-                    <li>Identify Pure Nash Equilibria.</li>
-                    <li>Verify if specific coordinates represent an equilibrium.</li>
+                    <li>Generarea matricelor de joc în Formă Normală (US-I.2).</li>
+                    <li>Identificarea Echilibrului Nash Pur.</li>
+                    <li>Verificarea coordonatelor introduse de utilizator.</li>
                 </ul>
                 <div className="mock-matrix">
-                    [ Placeholder for Matrix UI ]
+                    [ Aici va fi afișată Matricea ]
                 </div>
             </div>
         </div>
