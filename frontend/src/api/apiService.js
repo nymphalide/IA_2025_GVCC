@@ -26,11 +26,9 @@ export const evaluateMinMaxAnswer = (answerData) => {
 // --- NASH EQUILIBRIUM ENDPOINTS (Placeholder) ---
 // You will implement these in the next step
 export const generateNashProblem = () => {
-    // return api.post('/generate/nash');
-    return Promise.resolve({ data: {} }); // Temp mock
+    return api.post('/generate/nash'); // Ensure this matches backend @router.post("/generate/nash")
 };
 
 export const evaluateNashAnswer = (answerData) => {
-    // return api.post('/evaluate/nash', answerData);
-    return Promise.resolve({ data: {} }); // Temp mock
+    return api.post('/evaluate/nash', answerData);
 };

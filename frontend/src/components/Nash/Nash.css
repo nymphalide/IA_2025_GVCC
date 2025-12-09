@@ -1,28 +1,193 @@
 .nash-container {
-    max-width: 800px;
-    margin: 40px auto;
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.title {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+.nash-controls {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.generate-btn {
+    background-color: #3498db;
+    color: white;
+    padding: 12px 24px;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.generate-btn:hover {
+    background-color: #2980b9;
+}
+
+.error-message {
+    color: #e74c3c;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+/* --- Matrix Styling --- */
+.game-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    background: #fff;
+    padding: 30px;
+    border-radius: 8px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+.matrix-section {
     text-align: center;
 }
 
-.nash-container .placeholder-content {
-    background-color: #f0f8ff; /* AliceBlue */
-    border: 2px dashed #87cefa;
-    padding: 40px;
-    border-radius: 10px;
-    color: #444;
+.instruction {
+    color: #7f8c8d;
+    font-size: 0.9rem;
+    margin-bottom: 20px;
 }
 
-.nash-container ul {
-    text-align: left;
-    display: inline-block;
-    margin: 20px 0;
+.payoff-matrix {
+    margin: 0 auto;
+    border-collapse: collapse;
+    font-size: 1.2rem;
 }
 
-.mock-matrix {
+.payoff-matrix td {
+    padding: 15px 25px;
+    border: 2px solid #bdc3c7;
+    text-align: center;
+}
+
+.matrix-header, .matrix-header-col, .matrix-header-row {
+    background-color: #ecf0f1;
+    font-weight: bold;
+    color: #2c3e50;
+    font-size: 0.9rem;
+    border: none !important;
+}
+
+.payoff-cell {
+    background-color: #f9f9f9;
+}
+
+.p1-score {
+    color: #e74c3c; /* Red for Player 1 (Rows) */
+    font-weight: bold;
+}
+
+.p2-score {
+    color: #2980b9; /* Blue for Player 2 (Cols) */
+    font-weight: bold;
+}
+
+/* --- Form Styling --- */
+.nash-form {
+    background: #fdfdfd;
+    border-top: 1px solid #eee;
+    padding-top: 20px;
+}
+
+.question-group {
+    margin-bottom: 20px;
+}
+
+.radio-label {
+    margin-right: 20px;
+    font-size: 1.1rem;
+    cursor: pointer;
+}
+
+.coords-inputs {
+    background: #e8f6f3;
+    padding: 15px;
+    border-radius: 6px;
+    border: 1px solid #d1f2eb;
+    margin-bottom: 20px;
+}
+
+.input-row {
+    display: flex;
+    gap: 20px;
+    margin-top: 10px;
+}
+
+.input-row label {
+    display: flex;
+    flex-direction: column;
+    font-size: 0.9rem;
+    font-weight: 600;
+}
+
+.input-row input {
+    margin-top: 5px;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 100px;
+}
+
+.submit-btn {
+    background-color: #27ae60;
+    color: white;
+    padding: 12px 30px;
+    font-size: 1rem;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.submit-btn:hover {
+    background-color: #219150;
+}
+
+/* --- Result Styling --- */
+.nash-result {
     margin-top: 20px;
     padding: 20px;
-    background: white;
-    border: 1px solid #ccc;
+    border-radius: 8px;
+    border-left: 6px solid transparent;
+}
+
+.nash-success {
+    background-color: #d4edda;
+    border-left-color: #28a745;
+    color: #155724;
+}
+
+.nash-fail {
+    background-color: #f8d7da;
+    border-left-color: #dc3545;
+    color: #721c24;
+}
+
+.nash-partial {
+    background-color: #fff3cd;
+    border-left-color: #ffc107;
+    color: #856404;
+}
+
+.score-badge {
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.correct-answer-box {
+    margin-top: 10px;
     font-family: monospace;
-    color: #999;
+    background: rgba(255,255,255,0.5);
+    padding: 10px;
+    border-radius: 4px;
 }
