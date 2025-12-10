@@ -5,13 +5,13 @@ from sqlalchemy import text
 from app.api import generation, evaluation
 from app.db import database
 
-# --- Importurile pentru N-Queens ---
-from app.api.nqueens_generation import router as nqueens_generation_router
-from app.api.nqueens_evaluation import router as nqueens_evaluation_router
+# --- NEW IMPORTS FOR STRATEGY MODULE ---
+from app.api.strategy_generation import router as strategy_generation_router
+from app.api.strategy_evaluation import router as strategy_evaluation_router
 
 
 # =====================================================
-#                INSTANTA FASTAPI
+#                FASTAPI INSTANCE
 # =====================================================
 app = FastAPI(
     title="SmarTest AI Project",
@@ -56,13 +56,31 @@ async def startup_event():
 #                     ROUTERS
 # =====================================================
 
-# MinMax
-app.include_router(generation.router, prefix="/api", tags=["MinMax - Generation"])
-app.include_router(evaluation.router, prefix="/api", tags=["MinMax - Evaluation"])
+# MinMax (existing)
+app.include_router(
+    generation.router,
+    prefix="/api",
+    tags=["MinMax - Generation"]
+)
 
-# N-Queens
-app.include_router(nqueens_generation_router, prefix="/api", tags=["NQueensProblem - Generation"])
-app.include_router(nqueens_evaluation_router, prefix="/api", tags=["NQueensProblem - Evaluation"])
+app.include_router(
+    evaluation.router,
+    prefix="/api",
+    tags=["MinMax - Evaluation"]
+)
+
+# Strategy (NEW)
+app.include_router(
+    strategy_generation_router,
+    prefix="/api",
+    tags=["Strategy - Generation"]
+)
+
+app.include_router(
+    strategy_evaluation_router,
+    prefix="/api",
+    tags=["Strategy - Evaluation"]
+)
 
 
 # =====================================================
@@ -70,4 +88,6 @@ app.include_router(nqueens_evaluation_router, prefix="/api", tags=["NQueensProbl
 # =====================================================
 @app.get("/", tags=["Root"])
 async def read_root():
-    return {"message": "SmarTest API este gata. Vizitează /docs pentru documentație."}
+    return {
+        "message": "SmarTest API este gata. Vizitează /docs pentru documentație."
+    }

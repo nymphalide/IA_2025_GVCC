@@ -5,9 +5,11 @@ import "./Navbar.css";
 function Navbar() {
   return (
     <nav className="navbar">
-      <div className="navbar-brand">SmarTest</div>
+
+      <h2 className="navbar-brand">SmarTest</h2>
 
       <ul className="navbar-links">
+
         <li>
           <NavLink
             to="/minmax"
@@ -32,14 +34,15 @@ function Navbar() {
 
         <li>
           <NavLink
-            to="/nqueens"
+            to="/strategy"
             className={({ isActive }) =>
               isActive ? "nav-link active" : "nav-link"
             }
           >
-            N-Queens
+            Strategy
           </NavLink>
         </li>
+
       </ul>
     </nav>
   );

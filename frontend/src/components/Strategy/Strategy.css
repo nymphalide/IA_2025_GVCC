@@ -1,0 +1,86 @@
+/* Container principal */
+.strategy-container {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 20px;
+  text-align: center;
+}
+
+/* Caseta albă a butonului — IDENTICĂ cu MinMax */
+.strategy-panel {
+  background: white;
+  padding: 20px;
+  margin: 20px auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+  width: 400px;
+  text-align: center;
+}
+
+/* Butonul cyan — EXACT ca la MinMax */
+.generate-btn {
+  background-color: #61dafb;
+  color: #282c34;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.generate-btn:hover:not(:disabled) {
+  background-color: #4fa8c7;
+}
+
+/* Cutii albe — identic cu MinMax */
+.strategy-box {
+  background: white;
+  padding: 20px;
+  margin-top: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+  text-align: center;
+}
+
+/* Grid opțiuni */
+.options-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 15px 0;
+  justify-content: center;
+}
+
+/* Butoane strategie */
+.opt-btn {
+  padding: 10px 16px;
+  border: 1px solid #ccc;
+  background: #eee;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.opt-btn.selected {
+  background: #61dafb;
+  color: black;
+  border-color: #61dafb;
+  font-weight: bold;
+}
+
+/* Buton Evaluează — albastru deschis */
+.strategy-eval-btn {
+  background-color: #61dafb;
+  color: #282c34;
+  font-weight: bold;
+  border: none;
+  border-radius: 6px;
+  padding: 10px 20px;
+  cursor: pointer;
+  margin-top: 15px;
+  transition: background 0.3s;
+}
+
+.strategy-eval-btn:hover:not(:disabled) {
+  background-color: #4fa8c7;
+}

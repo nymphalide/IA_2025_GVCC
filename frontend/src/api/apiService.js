@@ -28,12 +28,12 @@ export const evaluateNashAnswer = (answerData) => {
 
 // --- NQUEENS ENDPOINTS (ACTUAL NEW ONES) ---
 
-export const generateNQueensProblem = () => {
-  return api.post('/generate/nqueens');
+export const generateStrategyProblem = () => {
+  return api.post('/generate/strategy');
 };
 
-export const evaluateNQueensAnswer = (answerData) => {
-  return api.post('/evaluate/nqueens', answerData);
+export const evaluateStrategyAnswer = (answerData) => {
+  return api.post('/evaluate/strategy', answerData);
 };
 
 export default api;
