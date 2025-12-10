@@ -111,7 +111,9 @@ function NashProblem() {
                         <h3>Matricea Plăților (Jucător 1, Jucător 2)</h3>
                         <p className="instruction">
                             Identificați dacă există un Echilibru Nash <strong>Pur</strong>.<br/>
-                            Valorile sunt (Payoff J1, Payoff J2). J1 alege rândul, J2 alege coloana.
+                            Valorile sunt (<span className="p1-score">Payoff J1</span>, <span className="p2-score">Payoff J2</span>). 
+                            <span className="p1-score"> J1</span> alege rândul, 
+                            <span className="p2-score"> J2</span> alege coloana.
                         </p>
                         
                         <table className="payoff-matrix">
