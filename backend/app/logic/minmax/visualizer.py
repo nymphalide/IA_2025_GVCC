@@ -1,8 +1,8 @@
 from graphviz import Digraph
 import base64
 
+
 def generate_tree_image_base64(tree_dict):
-    """Generează o imagine PNG base64 din structura de arbore dict."""
     dot = Digraph(format="png")
     dot.attr("node", shape="circle", style="filled", fontname="Arial")
 
@@ -17,7 +17,5 @@ def generate_tree_image_base64(tree_dict):
             add_nodes_edges(child, depth + 1)
 
     add_nodes_edges(tree_dict)
-
-    # returnăm imaginea ca base64
     img_bytes = dot.pipe(format="png")
     return base64.b64encode(img_bytes).decode("utf-8")

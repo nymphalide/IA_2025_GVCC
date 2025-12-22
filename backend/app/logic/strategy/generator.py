@@ -1,4 +1,3 @@
-# app/logic/strategy_generator.py
 import random
 
 PROBLEMS = [
@@ -25,6 +24,7 @@ PROBLEMS = [
 ]
 
 OPTIONS = ["BFS", "DFS", "A*", "Backtracking", "Hill-Climbing"]
+
 
 def generate_strategy_problem(seed: int):
     random.seed(seed)

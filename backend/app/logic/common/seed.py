@@ -19,9 +19,6 @@ def get_new_seed() -> int:
     Generează un seed nou, unic, bazat pe o combinație de timp și UUID.
     Acest seed este folosit când utilizatorul cere o problemă complet nouă.
     """
-    # Combinația asigură că numărul rezultat este mare și puțin probabil să fie duplicat.
     unique_part = uuid.uuid4().int % 100000000
     time_part = int(time.time() * 100)
-    
-    # Folosim o limită (ex: 2^31 - 1) pentru a fi siguri că încape într-un int standard
     return (time_part + unique_part) % 2147483647

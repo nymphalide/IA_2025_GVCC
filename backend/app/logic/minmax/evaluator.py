@@ -1,22 +1,17 @@
-from app.schemas.minmax_schemas import MinMaxAnswerRequest, EvaluationResponse
 from typing import Dict, Any
+from app.schemas.minmax_schemas import MinMaxAnswerRequest, EvaluationResponse
+
 
 def evaluate_minmax(user_answer: MinMaxAnswerRequest, correct_value: int, correct_nodes: int) -> EvaluationResponse:
-    """
-    Evaluează răspunsul utilizatorului pentru MinMax.
-    50% pentru valoarea corectă, 50% pentru numărul corect de noduri vizitate.
-    """
     percentage = 0
     explanation = ""
-    
-    # Verifică valoarea rădăcinii (50%)
+
     if user_answer.root_value == correct_value:
         percentage += 50
         explanation += "Valoarea rădăcinii este corectă. "
     else:
         explanation += f"Valoarea rădăcinii este greșită (Trimis: {user_answer.root_value}, Corect: {correct_value}). "
-        
-    # Verifică numărul de noduri vizitate (50%)
+
     if user_answer.visited_nodes == correct_nodes:
         percentage += 50
         explanation += "Numărul de noduri frunză vizitate este corect."
