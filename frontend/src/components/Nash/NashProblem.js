@@ -3,13 +3,20 @@ import { generateNashProblem, evaluateNashAnswer } from '../../api/apiService';
 import './Nash.css';
 
 function NashProblem() {
-    // Stare pentru problema curentă (matricea)
+    // Stare pentru problema curentă
     const [problem, setProblem] = useState(null); 
-    // Format problem: { seed, matrix: { rows, cols, grid: [[ [p1,p2], ...], ...] }, difficulty }
+    // Format: { seed, matrix, text, difficulty }
+
+    // Stare pentru configurarea generării (Customization)
+    const [config, setConfig] = useState({
+        rows: 3,
+        cols: 3,
+        random_size: true
+    });
 
     // Stare pentru răspunsul utilizatorului
     const [answer, setAnswer] = useState({
-        hasEquilibrium: null, // 'yes' sau 'no'
+        hasEquilibrium: null, 
         row: '',
         col: ''
     });
@@ -20,21 +27,46 @@ function NashProblem() {
     const [error, setError] = useState(null);
 
     /**
-     * Generează o nouă matrice de joc
+     * Funcție Helper: Colorează textul "Jucătorul 1" și "Jucătorul 2"
+     */
+    const formatTextWithColors = (text) => {
+        if (!text) return null;
+        
+        // Spargem textul pentru a găsi instanțele de Jucător 1/2
+        const parts = text.split(/(Jucătorul [12])/g);
+
+        return parts.map((part, index) => {
+            if (part === 'Jucătorul 1') {
+                return <span key={index} className="text-p1">Jucătorul 1</span>;
+            }
+            if (part === 'Jucătorul 2') {
+                return <span key={index} className="text-p2">Jucătorul 2</span>;
+            }
+            return part;
+        });
+    };
+
+    /**
+     * Generează o nouă matrice de joc cu setările curente
      */
     const handleGenerate = async () => {
         setIsLoading(true);
         setError(null);
         setProblem(null);
         setEvaluation(null);
-        setAnswer({ hasEquilibrium: null, row: '', col: '' }); // Reset form
+        setAnswer({ hasEquilibrium: null, row: '', col: '' }); 
 
         try {
-            const response = await generateNashProblem();
+            // Trimitem configurația către API
+            const response = await generateNashProblem({
+                rows: parseInt(config.rows),
+                cols: parseInt(config.cols),
+                random_size: config.random_size
+            });
             setProblem(response.data);
         } catch (err) {
             console.error("Eroare generare:", err);
-            setError("Nu s-a putut genera problema. Verifică dacă backend-ul rulează.");
+            setError("Nu s-a putut genera problema. Verifică backend-ul.");
         } finally {
             setIsLoading(false);
         }
@@ -46,13 +78,12 @@ function NashProblem() {
     const handleSubmit = async (e) => {
         e.preventDefault();
         
-        // Validare simplă
         if (!answer.hasEquilibrium) {
-            setError("Te rog selectează dacă există sau nu un echilibru.");
+            setError("Selectează dacă există sau nu un echilibru.");
             return;
         }
         if (answer.hasEquilibrium === 'yes' && (answer.row === '' || answer.col === '')) {
-            setError("Dacă există un echilibru, trebuie să introduci coordonatele (Index Rând/Coloană).");
+            setError("Introdu coordonatele (Index Rând/Coloană).");
             return;
         }
 
@@ -61,7 +92,6 @@ function NashProblem() {
         setEvaluation(null);
 
         try {
-            // Pregătim payload-ul conform NashAnswerRequest din Python
             const payload = {
                 problem_seed: problem.seed,
                 has_equilibrium: answer.hasEquilibrium === 'yes',
@@ -74,15 +104,12 @@ function NashProblem() {
             setEvaluation(response.data);
         } catch (err) {
             console.error("Eroare evaluare:", err);
-            setError("A apărut o eroare la evaluarea răspunsului.");
+            setError("Eroare la evaluare.");
         } finally {
             setIsLoading(false);
         }
     };
 
-    /**
-     * Helper pentru stilizarea rezultatului
-     */
     const getResultClass = () => {
         if (!evaluation) return '';
         if (evaluation.percentage === 100) return 'nash-success';
@@ -94,39 +121,73 @@ function NashProblem() {
         <div className="nash-container">
             <h1 className="title">Teoria Jocurilor: Echilibrul Nash</h1>
             
-            <div className="nash-controls">
+            {/* --- Config Panel --- */}
+            <div className="config-panel">
+                <div className="config-group">
+                    <label>
+                        <input 
+                            type="checkbox" 
+                            checked={config.random_size}
+                            onChange={(e) => setConfig({...config, random_size: e.target.checked})}
+                        />
+                        Dimensiune Aleatoare
+                    </label>
+                </div>
+
+                {!config.random_size && (
+                    <div className="config-inputs">
+                        <label>
+                            Rânduri (2-4):
+                            <input 
+                                type="number" min="2" max="4" 
+                                value={config.rows}
+                                onChange={(e) => setConfig({...config, rows: e.target.value})}
+                            />
+                        </label>
+                        <label>
+                            Coloane (2-4):
+                            <input 
+                                type="number" min="2" max="4" 
+                                value={config.cols}
+                                onChange={(e) => setConfig({...config, cols: e.target.value})}
+                            />
+                        </label>
+                    </div>
+                )}
+
                 <button 
                     onClick={handleGenerate} 
                     disabled={isLoading} 
                     className="generate-btn"
                 >
-                    {isLoading ? 'Se procesează...' : 'Generează Matrice Nouă'}
+                    {isLoading ? 'Se procesează...' : 'Generează Matrice'}
                 </button>
-                {error && <p className="error-message">{error}</p>}
             </div>
+            {error && <p className="error-message">{error}</p>}
 
+            {/* --- Game Workspace --- */}
             {problem && (
                 <div className="game-workspace">
                     <div className="matrix-section">
-                        <h3>Matricea Plăților (Jucător 1, Jucător 2)</h3>
+                        <h3>{problem.text.title}</h3>
+                        
+                        {/* Text formatat cu culori */}
                         <p className="instruction">
-                            Identificați dacă există un Echilibru Nash <strong>Pur</strong>.<br/>
-                            Valorile sunt (<span className="p1-score">Payoff J1</span>, <span className="p2-score">Payoff J2</span>). 
-                            <span className="p1-score"> J1</span> alege rândul, 
-                            <span className="p2-score"> J2</span> alege coloana.
+                            {formatTextWithColors(problem.text.description)}
+                        </p>
+                        
+                        <p className="instruction-req">
+                            {problem.text.requirement}
                         </p>
                         
                         <table className="payoff-matrix">
                             <tbody>
-                                {/* Header pentru indexul coloanelor */}
                                 <tr>
                                     <td className="matrix-header"></td>
                                     {problem.matrix.grid[0].map((_, idx) => (
                                         <td key={`h-${idx}`} className="matrix-header-col">Col {idx}</td>
                                     ))}
                                 </tr>
-                                
-                                {/* Rândurile matricei */}
                                 {problem.matrix.grid.map((row, rIndex) => (
                                     <tr key={rIndex}>
                                         <td className="matrix-header-row">Rând {rIndex}</td>
@@ -144,23 +205,18 @@ function NashProblem() {
 
                     <form onSubmit={handleSubmit} className="nash-form">
                         <h3>Răspunsul Tău:</h3>
-                        
                         <div className="question-group">
                             <p>Există un echilibru Nash pur?</p>
                             <label className="radio-label">
                                 <input 
-                                    type="radio" 
-                                    name="hasEq" 
-                                    value="yes"
+                                    type="radio" name="hasEq" value="yes"
                                     checked={answer.hasEquilibrium === 'yes'}
                                     onChange={() => setAnswer({...answer, hasEquilibrium: 'yes'})} 
                                 /> Da
                             </label>
                             <label className="radio-label">
                                 <input 
-                                    type="radio" 
-                                    name="hasEq" 
-                                    value="no" 
+                                    type="radio" name="hasEq" value="no" 
                                     checked={answer.hasEquilibrium === 'no'}
                                     onChange={() => setAnswer({...answer, hasEquilibrium: 'no'})}
                                 /> Nu
@@ -169,25 +225,19 @@ function NashProblem() {
 
                         {answer.hasEquilibrium === 'yes' && (
                             <div className="coords-inputs">
-                                <p>Introduceți coordonatele unui echilibru (ex: 0, 0):</p>
+                                <p>Coordonate (ex: 0, 0):</p>
                                 <div className="input-row">
-                                    <label>
-                                        Index Rând:
+                                    <label>Index Rând:
                                         <input 
-                                            type="number" 
-                                            min="0"
-                                            max={problem.matrix.rows - 1}
+                                            type="number" min="0" max={problem.matrix.rows - 1}
                                             value={answer.row}
                                             onChange={(e) => setAnswer({...answer, row: e.target.value})}
                                             required
                                         />
                                     </label>
-                                    <label>
-                                        Index Coloană:
+                                    <label>Index Col:
                                         <input 
-                                            type="number" 
-                                            min="0"
-                                            max={problem.matrix.cols - 1}
+                                            type="number" min="0" max={problem.matrix.cols - 1}
                                             value={answer.col}
                                             onChange={(e) => setAnswer({...answer, col: e.target.value})}
                                             required
@@ -204,6 +254,7 @@ function NashProblem() {
                 </div>
             )}
 
+            {/* --- Results --- */}
             {evaluation && (
                 <div className={`nash-result ${getResultClass()}`}>
                     <h2>Rezultat Evaluare</h2>

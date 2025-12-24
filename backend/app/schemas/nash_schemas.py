@@ -1,6 +1,12 @@
 from pydantic import BaseModel
 from typing import List, Tuple, Optional, Any
 
+# --- Sub-schemas for Text Content ---
+class ProblemText(BaseModel):
+    title: str
+    description: str
+    requirement: str
+
 # --- Modele de Date (Pydantic) ---
 
 class NashMatrix(BaseModel):
@@ -15,11 +21,19 @@ class NashMatrix(BaseModel):
     cols: int
     grid: List[List[Tuple[int, int]]]
 
+# --- NEW: Request Body for Generation ---
+class NashGenerateRequest(BaseModel):
+    rows: int = 3
+    cols: int = 3
+    random_size: bool = False
+
 class NashProblemResponse(BaseModel):
     """Ce trimite API-ul când se cere o problemă Nash."""
     seed: int
     matrix: NashMatrix
-    difficulty: str = "Medium"
+    # NEW: Dynamic text field
+    text: ProblemText
+    difficulty: str = "Custom"
 
 class NashAnswerRequest(BaseModel):
     """Ce trimite Frontend-ul când utilizatorul răspunde."""
@@ -31,5 +45,5 @@ class NashAnswerRequest(BaseModel):
 class NashEvaluationResponse(BaseModel):
     """Ce răspunde API-ul după evaluare."""
     percentage: int
-    correct_answer: Any # Poate fi un mesaj sau o listă de echilibre
+    correct_answer: Any
     explanation: str
