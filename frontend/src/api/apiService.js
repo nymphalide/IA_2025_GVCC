@@ -7,18 +7,19 @@ const api = axios.create({
 });
 
 // --- MINMAX ENDPOINTS ---
-export const generateMinMaxProblem = () => {
-  return api.post('/generate/minmax');
+// Actualizat pentru a accepta parametri de configurare
+export const generateMinMaxProblem = (config = {}) => {
+  return api.post('/generate/minmax', config);
 };
 
 export const evaluateMinMaxAnswer = (answerData) => {
   return api.post('/evaluate/minmax', answerData);
 };
 
-// --- NASH ENDPOINTS (MODIFIED) ---
+// --- NASH ENDPOINTS ---
 export const generateNashProblem = (config = {}) => {
     // config example: { rows: 3, cols: 3, random_size: false }
-    return api.post('/generate/nash', config); 
+    return api.post('/generate/nash', config);
 };
 
 export const evaluateNashAnswer = (answerData) => {
