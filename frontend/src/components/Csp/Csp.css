@@ -1,0 +1,229 @@
+/* --- Global Container --- */
+.csp-container {
+    max-width: 950px;
+    margin: 0 auto;
+    padding: 20px;
+    font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+    color: #333;
+}
+  
+.title {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+    font-size: 2rem;
+    font-weight: 700;
+}
+  
+/* --- Configuration Panel --- */
+.config-panel {
+    background: #ffffff;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap; 
+    gap: 30px; /* Mărit gap-ul între grupuri */
+    margin-bottom: 30px;
+    border: 1px solid #eef2f5;
+}
+  
+/* MODIFICARE LAYOUT: Flex Row pentru aliniere orizontală */
+.config-group {
+    display: flex;
+    flex-direction: row; /* Aliniere orizontală */
+    align-items: center; /* Centrare verticală */
+    gap: 15px; /* Spațiu între checkbox și dropdown */
+    white-space: nowrap;
+}
+
+.config-group label {
+    font-weight: 600;
+    color: #555;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 0;
+}
+  
+.config-inputs {
+    display: flex;
+    align-items: center;
+}
+
+.config-inputs select {
+    padding: 6px 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    background-color: #fff;
+    color: #333;
+    min-width: 80px;
+}
+
+.generate-btn {
+    background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
+    color: white;
+    border: none;
+    padding: 10px 24px;
+    border-radius: 8px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.1s, box-shadow 0.2s;
+    box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
+    /* margin-top eliminat pentru a se alinia cu restul */
+}
+  
+.generate-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+    box-shadow: 0 6px 8px rgba(52, 152, 219, 0.4);
+}
+  
+/* --- Error Messages --- */
+.error-message {
+    background: #fee2e2;
+    color: #b91c1c;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    margin-bottom: 20px;
+    border: 1px solid #fecaca;
+}
+  
+/* --- Game Workspace --- */
+.game-workspace {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    background: white;
+    padding: 40px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+}
+  
+.description-section {
+    text-align: center;
+}
+
+.instruction {
+    font-size: 1.05rem;
+    color: #5f6368;
+    line-height: 1.6;
+    margin-bottom: 15px;
+}
+
+.instruction-req {
+    font-size: 1.1rem;
+    color: #202124;
+    font-weight: 600;
+}
+
+.note-text {
+    font-size: 0.9rem;
+    color: #d35400;
+    background: #fff4e6;
+    padding: 10px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-top: 10px;
+}
+
+/* --- Graph Visualization --- */
+.graph-viz {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.graph-svg {
+    border: 1px solid #eee;
+    background-color: #fcfcfc;
+    border-radius: 8px;
+}
+
+/* --- Answer Form --- */
+.csp-form {
+    background: #f9fafb;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px dashed #d1d5db;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.inputs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    width: 100%;
+}
+
+.input-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.input-card label {
+    font-weight: 600;
+    color: #374151;
+}
+
+.input-card select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.submit-btn {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    border: none;
+    padding: 12px 30px;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+}
+
+.submit-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 10px rgba(16, 185, 129, 0.4);
+}
+
+/* --- Results --- */
+.csp-result {
+    margin-top: 30px;
+    padding: 25px;
+    border-radius: 12px;
+    text-align: center;
+    animation: fadeIn 0.5s ease-out;
+}
+  
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.result-success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
+.result-fail { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+.result-partial { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+
+.score-badge {
+    font-size: 2rem;
+    font-weight: 800;
+}
