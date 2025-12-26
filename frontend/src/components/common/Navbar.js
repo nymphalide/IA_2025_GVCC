@@ -43,6 +43,17 @@ function Navbar() {
           </NavLink>
         </li>
 
+        <li>
+          <NavLink
+            to="/csp"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+          >
+            CSP
+          </NavLink>
+        </li>
+
       </ul>
     </nav>
   );
