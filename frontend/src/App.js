@@ -5,6 +5,7 @@ import MinMaxProblem from './components/MinMax/MinMaxProblem';
 import NashProblem from './components/Nash/NashProblem';
 import StrategyProblem from './components/Strategy/StrategyProblem';
 import CspProblem from './components/Csp/CspProblem'; // Import nou
+import BayesProblem from "./components/Bayes/BayesProblem";
 import './App.css';
 
 function App() {
@@ -23,7 +24,7 @@ function App() {
             <Route path="/nash" element={<NashProblem />} />
             <Route path="/strategy" element={<StrategyProblem />} />
             <Route path="/csp" element={<CspProblem />} /> {/* Ruta nouă */}
-
+            <Route path="/bayes" element={<BayesProblem />} />
             {/* Fallback for unknown routes */}
             <Route path="*" element={<div style={{padding: 20}}>404: Page Not Found</div>} />
           </Routes>

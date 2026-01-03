@@ -1,0 +1,66 @@
+.bayes-container {
+  max-width: 950px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  color: #333;
+}
+
+.bayes-workspace {
+  gap: 25px;
+}
+
+.bayes-card {
+  background: #ffffff;
+  padding: 22px 26px;
+  border-radius: 14px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.06);
+}
+
+.bayes-card h3 {
+  margin-top: 0;
+  margin-bottom: 12px;
+  color: #2c3e50;
+}
+
+.bayes-network {
+  text-align: center;
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #34495e;
+  line-height: 1.8;
+}
+
+.prob-group {
+  margin-bottom: 14px;
+}
+
+.prob-group ul {
+  margin: 6px 0 0 20px;
+  padding: 0;
+}
+
+.prob-group li {
+  margin-bottom: 4px;
+  font-family: monospace;
+}
+
+.question-card {
+  background: #f0f9ff;
+  border-left: 6px solid #3498db;
+}
+
+.question-card p {
+  font-size: 1.05rem;
+}
+
+.answer-form {
+  background: #f9fafb;
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px dashed #d1d5db;
+  display: flex;
+  justify-content: center;
+  gap: 25px;
+  align-items: flex-end;
+}

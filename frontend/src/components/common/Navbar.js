@@ -54,6 +54,17 @@ function Navbar() {
           </NavLink>
         </li>
 
+        <li>
+          <NavLink
+            to="/bayes"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+          >
+            Bayes
+          </NavLink>
+      </li>
+
       </ul>
     </nav>
   );

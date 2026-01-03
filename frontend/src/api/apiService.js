@@ -41,4 +41,13 @@ export const evaluateCspAnswer = (answerData) => {
     return api.post('/evaluate/csp', answerData);
 };
 
+// --- BAYES ENDPOINTS ---
+export const generateBayesProblem = (config = {}) => {
+  return api.get('/bayes/generate', { params: config });
+};
+
+export const evaluateBayesAnswer = (answerData) => {
+  return api.post('/bayes/evaluate', answerData);
+};
+
 export default api;
