@@ -6,7 +6,9 @@ from app.schemas.minmax_schemas import MinMaxNode
 from app.logic.minmax.strings import MINMAX_TEXT_RO
 from app.logic.common.difficulty import (
     MINMAX_L6_MIN_BREADTH,
-    MINMAX_L6_MAX_BREADTH
+    MINMAX_L6_MAX_BREADTH, 
+    MINMAX_L6_MIN_DEPTH,  
+    MINMAX_L6_MAX_DEPTH 
 )
 
 leaf_nodes_visited_count = 0
@@ -102,7 +104,7 @@ def generate_and_solve_minmax(seed: int, params: Dict[str, Any] = None) -> Tuple
     
     # --- 1. Configurare ADÂNCIME (Depth) ---
     # IMPORTANT: Consumăm întotdeauna numărul aleator pentru a păstra sincronizarea RNG
-    random_depth = random.randint(0, 5)
+    random_depth = random.randint(MINMAX_L6_MIN_DEPTH, MINMAX_L6_MAX_DEPTH)
     
     chosen_depth = random_depth
     if params:

@@ -101,25 +101,42 @@ class CSPSolver:
         self.assignments = {}
         self.assignment_history = [] 
 
+    def check_constraint(self, var1, val1, var2, val2) -> bool:
+        """
+        Verifică constrângerea binară între două variabile.
+        Aceasta este metoda centrală de abstractizare a CSP-ului.
+        
+        Pentru instanța curentă (Graph Coloring), constrângerea este INEGALITATEA.
+        Dacă am avea N-Queens sau alte probleme, am schimba doar această metodă.
+        """
+        return val1 != val2
+
     def apply_initial_assignments(self, partial_map: Dict[str, str]):
         """
-        Încarcă asignările parțiale (pre-asignate) și aplică constrângerile
-        asociate (pruning) pentru a asigura o stare inițială consistentă.
+        Încarcă asignările parțiale și aplică constrângerile (pruning)
+        pentru a asigura o stare inițială consistentă.
         """
         for var, val in partial_map.items():
             self.assignments[var] = val
             
-            # Aplicăm constrângerile asupra vecinilor
+            # Aplicăm constrângerile asupra vecinilor folosind metoda generică
             for neighbor in self.adj[var]:
                 if neighbor not in self.assignments:
-                    if val in self.domains[neighbor]:
-                        self.domains[neighbor].remove(val)
+                    # Filtram domeniul vecinului bazat pe check_constraint
+                    original_domain = self.domains[neighbor][:]
+                    for neighbor_val in original_domain:
+                        if not self.check_constraint(var, val, neighbor, neighbor_val):
+                            if neighbor_val in self.domains[neighbor]:
+                                self.domains[neighbor].remove(neighbor_val)
     
     def is_consistent(self, var, color, assignment):
-        """Verifică conflictul cu vecinii deja asignați în `assignment`."""
+        """Verifică conflictul cu vecinii deja asignați folosind constrângerea generică."""
         for neighbor in self.adj[var]:
-            if neighbor in assignment and assignment[neighbor] == color:
-                return False
+            if neighbor in assignment:
+                neighbor_val = assignment[neighbor]
+                # Folosim check_constraint în loc de !=
+                if not self.check_constraint(var, color, neighbor, neighbor_val):
+                    return False
         return True
 
     def calculate_mrv_score(self, var):
@@ -158,10 +175,18 @@ class CSPSolver:
         pruned = {} 
         for neighbor in self.adj[var]:
             if neighbor not in self.assignments:
-                if value in self.domains[neighbor]:
-                    self.domains[neighbor].remove(value)
+                # Verificăm fiecare valoare din domeniul vecinului față de noua asignare
+                # folosind constrângerea generică
+                to_remove = []
+                for neighbor_val in self.domains[neighbor]:
+                    if not self.check_constraint(var, value, neighbor, neighbor_val):
+                        to_remove.append(neighbor_val)
+                
+                if to_remove:
                     if neighbor not in pruned: pruned[neighbor] = []
-                    pruned[neighbor].append(value)
+                    for val_to_remove in to_remove:
+                        self.domains[neighbor].remove(val_to_remove)
+                        pruned[neighbor].append(val_to_remove)
                     
                     if not self.domains[neighbor]:
                         return False, pruned
@@ -193,7 +218,8 @@ class CSPSolver:
         for x in domains[xi]:
             found_support = False
             for y in domains[xj]:
-                if x != y:
+                # Folosim constrângerea generică în loc de x != y
+                if self.check_constraint(xi, x, xj, y):
                     found_support = True
                     break
             if not found_support:
@@ -294,10 +320,7 @@ def generate_csp_problem(seed: int, params: Dict[str, Any]):
     final_solver = CSPSolver(raw_data, algo)
     final_solver.apply_initial_assignments(partial_assignments)
 
-    # 4. FIX PENTRU UI: Resetăm domeniile pentru Frontend
-    # Deși solverul intern a tăiat domeniile (pruning) în 'final_solver.domains',
-    # interfața grafică are nevoie de domeniile COMPLETE pentru ca utilizatorul
-    # să poată alege orice culoare (chiar și una greșită).
+    # 4. Resetăm domeniile pentru Frontend (UI are nevoie de toate opțiunile vizuale)
     ui_domains = {n: RO_SORTED_COLORS[:] for n in final_solver.nodes}
 
     nodes_pyd = [CspNode(**n) for n in raw_data["nodes"]]
@@ -309,7 +332,6 @@ def generate_csp_problem(seed: int, params: Dict[str, Any]):
     text_data = {
         "title": CSP_TEXT_RO["title"],
         "description": CSP_TEXT_RO["description"].format(
-            node_count=size,
             colors=", ".join(display_colors_text)
         ),
         "requirement": CSP_TEXT_RO["requirement"].format(algorithm=algo),
@@ -319,7 +341,7 @@ def generate_csp_problem(seed: int, params: Dict[str, Any]):
     return {
         "seed": seed,
         "graph": graph_obj,
-        "domains": ui_domains, # AICI ESTE FIX-UL: Trimitem domeniile complete
+        "domains": ui_domains,
         "assignments": final_solver.assignments,
         "all_variables": final_solver.nodes,
         "available_colors": RO_SORTED_COLORS,
