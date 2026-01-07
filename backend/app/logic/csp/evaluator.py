@@ -55,7 +55,7 @@ def evaluate_csp(user_answer: CspAnswerRequest) -> CspEvaluationResponse:
         percentage = int((matches / total_target) * 100)
         
         if percentage == 100:
-            explanation = "Felicitări! Toate nodurile au fost completate corect conform algoritmului determinist (ordine alfabetică RO)."
+            explanation = "Toate nodurile au fost completate corect conform algoritmului determinist."
         else:
             explanation = (
                 f"Ai completat corect {matches} din {total_target} noduri. "
