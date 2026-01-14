@@ -202,11 +202,19 @@ function BayesProblem() {
       )}
 
       {evaluation && (
-        <div className={`evaluation-result ${getResultClass()}`}>
-          <h2>Rezultat evaluare</h2>
-          <div className="score-badge">{evaluation.score}%</div>
+      <div className={`evaluation-result ${getResultClass()}`}>
+        <h2>Rezultat evaluare</h2>
+
+        <div className="score-badge">
+          {evaluation.score}%
         </div>
-      )}
+
+        <div className="correct-answer">
+          <strong>Răspuns corect:</strong>{" "}
+          {problem.problem.solution}
+        </div>
+      </div>
+    )}
     </div>
   );
 }
