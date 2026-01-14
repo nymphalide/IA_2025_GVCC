@@ -25,13 +25,20 @@ export const evaluateNashAnswer = (answerData) => {
 };
 
 // --- STRATEGY ENDPOINTS ---
-export const generateStrategyProblem = () => {
-  return api.post('/generate/strategy');
+export const generateStrategyProblem = (config = {}) => {
+  return api.post('/generate/strategy', config);
 };
 export const evaluateStrategyAnswer = (answerData) => {
   return api.post('/evaluate/strategy', answerData);
 };
 
+export const generateRLProblem = (config) => {
+  return api.post('/generate/rl', config);
+};
+
+export const evaluateRLAnswer = (answerData) => {
+  return api.post('/evaluate/rl', answerData)
+};
 // --- CSP ENDPOINTS (NEW) ---
 export const generateCspProblem = (config = {}) => {
     return api.post('/generate/csp', config);
@@ -41,7 +48,6 @@ export const evaluateCspAnswer = (answerData) => {
     return api.post('/evaluate/csp', answerData);
 };
 
-// --- BAYES ENDPOINTS ---
 export const generateBayesProblem = (config = {}) => {
   return api.get('/bayes/generate', { params: config });
 };

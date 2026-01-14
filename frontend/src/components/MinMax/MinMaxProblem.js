@@ -134,7 +134,7 @@ function MinMaxProblem() {
                             checked={config.randomDepth}
                             onChange={(e) => setConfig({...config, randomDepth: e.target.checked})}
                         />
-                        Adâncime aleatorie
+                        Adâncime Aleatoare
                     </label>
 
                     {!config.randomDepth && (
@@ -158,7 +158,7 @@ function MinMaxProblem() {
                             checked={config.randomRoot}
                             onChange={(e) => setConfig({...config, randomRoot: e.target.checked})}
                         />
-                        Prim nod aleator
+                        Nod Rădăcină Aleator
                     </label>
 
                     {!config.randomRoot && (
@@ -180,7 +180,7 @@ function MinMaxProblem() {
                     disabled={isLoading} 
                     className="generate-btn"
                 >
-                    {isLoading ? 'Se procesează...' : 'Generează Problema MinMax'}
+                    {isLoading ? 'Se procesează...' : 'Generează Problemă'}
                 </button>
             </div>
 

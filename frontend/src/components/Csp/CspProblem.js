@@ -40,6 +40,7 @@ function CspProblem() {
         setProblem(null);
         setEvaluation(null);
         setUserAnswers({});
+
         try {
             const payload = {
                 random_graph: config.randomGraph,
@@ -70,6 +71,7 @@ function CspProblem() {
 
     const handleSubmit = async () => {
         if (!problem) return;
+
         const totalNodes = problem.graph.nodes.length;
         if (Object.keys(userAnswers).length < totalNodes) {
             setError(`Ați completat doar ${Object.keys(userAnswers).length} din ${totalNodes} noduri.`);
@@ -79,12 +81,14 @@ function CspProblem() {
         setIsLoading(true);
         setEvaluation(null);
         setError(null);
+
         try {
             const payload = {
                 problem_seed: problem.seed,
                 user_assignments: userAnswers,
                 generated_params: usedConfig 
             };
+
             const response = await evaluateCspAnswer(payload);
             setEvaluation(response.data);
         } catch (err) {
@@ -114,9 +118,11 @@ function CspProblem() {
 
     const renderGraph = () => {
         if (!problem) return null;
+
         const { nodes, edges } = problem.graph;
         const scale = 3.5; 
         const radius = 15;
+
         return (
             <svg width="350" height="350" className="graph-svg">
                 {edges.map((e, idx) => {
@@ -134,6 +140,7 @@ function CspProblem() {
                 {nodes.map((n) => {
                     const isAssigned = userAnswers[n.id] !== undefined;
                     const fillColor = isAssigned ? colorMap[userAnswers[n.id]] : colorMap["Unknown"];
+                    
                     return (
                         <g key={`node-${n.id}`}>
                             <circle 
@@ -158,7 +165,8 @@ function CspProblem() {
 
     return (
         <div className="csp-container">
-            <h1 className="title">CSP: Map Coloring</h1>
+            {/* TERMINOLOGIE ACTUALIZATĂ AICI */}
+            <h1 className="title">CSP: Problema Colorării Grafurilor</h1>
             <div className="config-panel">
                 <div className="config-group">
                     <label>
@@ -205,7 +213,7 @@ function CspProblem() {
                             checked={config.randomPrefill}
                             onChange={(e) => setConfig({...config, randomPrefill: e.target.checked})}
                         />
-                        Pre-asignare
+                        Grad Completare Aleator
                     </label>
                     {!config.randomPrefill && (
                         <div className="config-inputs">
@@ -218,7 +226,7 @@ function CspProblem() {
                     )}
                 </div>
                 <button onClick={handleGenerate} disabled={isLoading} className="generate-btn">
-                    {isLoading ? 'Se procesează...' : 'Generare Problemă'}
+                    {isLoading ? 'Se procesează...' : 'Generează Problemă'}
                 </button>
             </div>
             {error && <p className="error-message">{error}</p>}
@@ -234,7 +242,7 @@ function CspProblem() {
                         {renderGraph()}
                     </div>
                     <div className="csp-form">
-                        <h3>Asignare Variabile</h3>
+                        <h3>Asignare Variabile (Finală)</h3>
                         <div className="inputs-grid">
                             {problem.all_variables.map(nodeId => {
                                 const isPreassigned = problem.assignments[nodeId] !== undefined;
@@ -247,8 +255,6 @@ function CspProblem() {
                                             onChange={(e) => handleAnswerChange(nodeId, e.target.value)}
                                         >
                                             <option value="" disabled>Alege culoare...</option>
-                                            {/* FIX: Iterăm prin available_colors pentru a arăta toate opțiunile,
-                                                indiferent de starea solverului */}
                                             {problem.available_colors && problem.available_colors.map(color => (
                                                 <option key={color} value={color}>
                                                     {displayColorMap[color] || color}

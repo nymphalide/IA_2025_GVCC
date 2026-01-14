@@ -4,7 +4,7 @@ Stochează textul enunțurilor pentru a asigura Single Source of Truth în Backe
 """
 
 MINMAX_TEXT_RO = {
-    "title": "Problemă MinMax cu Pruning Alpha-Beta",
+    "title": "Problemă MinMax cu Alpha-Beta",
     "description": (
         "Se consideră arborele de mai jos, în care nodurile frunză au valori numerice, "
         "iar celelalte noduri sunt de tip MAX sau MIN."

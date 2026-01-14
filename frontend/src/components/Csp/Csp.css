@@ -25,17 +25,16 @@
     align-items: center;
     justify-content: center;
     flex-wrap: wrap; 
-    gap: 30px; /* Mărit gap-ul între grupuri */
+    gap: 30px;
     margin-bottom: 30px;
     border: 1px solid #eef2f5;
 }
   
-/* MODIFICARE LAYOUT: Flex Row pentru aliniere orizontală */
 .config-group {
     display: flex;
-    flex-direction: row; /* Aliniere orizontală */
-    align-items: center; /* Centrare verticală */
-    gap: 15px; /* Spațiu între checkbox și dropdown */
+    flex-direction: row;
+    align-items: center;
+    gap: 15px;
     white-space: nowrap;
 }
 
@@ -76,7 +75,6 @@
     cursor: pointer;
     transition: transform 0.1s, box-shadow 0.2s;
     box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
-    /* margin-top eliminat pentru a se alinia cu restul */
 }
   
 .generate-btn:hover:not(:disabled) {
@@ -106,21 +104,39 @@
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
   
+/* MODIFICARE: Flex column centrat pentru a replica layout-ul Nash */
 .description-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     text-align: center;
 }
 
+/* MODIFICARE: Ajustat margini pentru consistență */
+.description-section h3 {
+    margin-top: 0;
+    margin-bottom: 1rem;
+    color: #374151;
+}
+
+/* MODIFICARE: Adăugat max-width */
 .instruction {
     font-size: 1.05rem;
     color: #5f6368;
     line-height: 1.6;
     margin-bottom: 15px;
+    white-space: pre-wrap;
+    max-width: 750px;
 }
 
+/* MODIFICARE: Adăugat max-width și margin-bottom explicit */
 .instruction-req {
     font-size: 1.1rem;
     color: #202124;
     font-weight: 600;
+    white-space: pre-wrap;
+    margin-bottom: 25px;
+    max-width: 750px;
 }
 
 .note-text {
@@ -130,7 +146,8 @@
     padding: 10px;
     border-radius: 6px;
     display: inline-block;
-    margin-top: 10px;
+    margin-top: 0;
+    white-space: pre-wrap;
 }
 
 /* --- Graph Visualization --- */
