@@ -31,24 +31,14 @@ function NashProblem() {
      */
     const formatTextWithColors = (text) => {
         if (!text) return null;
-        
-        // Spargem textul pentru a găsi instanțele de Jucător 1/2
         const parts = text.split(/(Jucătorul [12])/g);
-
         return parts.map((part, index) => {
-            if (part === 'Jucătorul 1') {
-                return <span key={index} className="text-p1">Jucătorul 1</span>;
-            }
-            if (part === 'Jucătorul 2') {
-                return <span key={index} className="text-p2">Jucătorul 2</span>;
-            }
+            if (part === 'Jucătorul 1') return <span key={index} className="text-p1">Jucătorul 1</span>;
+            if (part === 'Jucătorul 2') return <span key={index} className="text-p2">Jucătorul 2</span>;
             return part;
         });
     };
 
-    /**
-     * Generează o nouă matrice de joc cu setările curente
-     */
     const handleGenerate = async () => {
         setIsLoading(true);
         setError(null);
@@ -57,7 +47,6 @@ function NashProblem() {
         setAnswer({ hasEquilibrium: null, row: '', col: '' }); 
 
         try {
-            // Trimitem configurația către API
             const response = await generateNashProblem({
                 rows: parseInt(config.rows),
                 cols: parseInt(config.cols),
@@ -72,9 +61,6 @@ function NashProblem() {
         }
     };
 
-    /**
-     * Trimite răspunsul la API
-     */
     const handleSubmit = async (e) => {
         e.preventDefault();
         
@@ -97,7 +83,11 @@ function NashProblem() {
                 has_equilibrium: answer.hasEquilibrium === 'yes',
                 equilibrium_point: answer.hasEquilibrium === 'yes'
                     ? [parseInt(answer.row, 10), parseInt(answer.col, 10)]
-                    : null
+                    : null,
+                // --- MODIFICARE AICI: Trimitem configurația curentă pentru reconstrucție ---
+                rows: parseInt(config.rows),
+                cols: parseInt(config.cols),
+                random_size: config.random_size
             };
 
             const response = await evaluateNashAnswer(payload);
@@ -170,12 +160,9 @@ function NashProblem() {
                 <div className="game-workspace">
                     <div className="matrix-section">
                         <h3>{problem.text.title}</h3>
-                        
-                        {/* Text formatat cu culori */}
                         <p className="instruction">
                             {formatTextWithColors(problem.text.description)}
                         </p>
-                        
                         <p className="instruction-req">
                             {problem.text.requirement}
                         </p>

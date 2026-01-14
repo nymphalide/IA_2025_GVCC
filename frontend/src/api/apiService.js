@@ -32,6 +32,12 @@ export const evaluateStrategyAnswer = (answerData) => {
   return api.post('/evaluate/strategy', answerData);
 };
 
+export const generateRLProblem = (config) => {
+  return api.post('/generate/rl', config);
+};
+
+export const evaluateRLAnswer = (answerData) => {
+  return api.post('/evaluate/rl', answerData);
 // --- CSP ENDPOINTS (NEW) ---
 export const generateCspProblem = (config = {}) => {
     return api.post('/generate/csp', config);

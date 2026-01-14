@@ -1,11 +1,13 @@
 from pydantic import BaseModel
 from typing import List, Tuple, Optional, Any
 
+
 # --- Sub-schemas for Text Content ---
 class ProblemText(BaseModel):
     title: str
     description: str
     requirement: str
+
 
 # --- Modele de Date (Pydantic) ---
 
@@ -21,26 +23,36 @@ class NashMatrix(BaseModel):
     cols: int
     grid: List[List[Tuple[int, int]]]
 
-# --- NEW: Request Body for Generation ---
+
+# --- Request Body for Generation ---
 class NashGenerateRequest(BaseModel):
     rows: int = 3
     cols: int = 3
     random_size: bool = False
 
+
 class NashProblemResponse(BaseModel):
     """Ce trimite API-ul când se cere o problemă Nash."""
     seed: int
     matrix: NashMatrix
-    # NEW: Dynamic text field
     text: ProblemText
     difficulty: str = "Custom"
 
+
 class NashAnswerRequest(BaseModel):
-    """Ce trimite Frontend-ul când utilizatorul răspunde."""
+    """
+    Ce trimite Frontend-ul când utilizatorul răspunde.
+    Include acum și parametrii de configurare pentru a asigura reproductibilitatea.
+    """
     problem_seed: int
     has_equilibrium: bool
-    # Coordonate opționale: [row_index, col_index] dacă există
     equilibrium_point: Optional[Tuple[int, int]] = None
+
+    # Parametri necesari pentru reconstrucția exactă a problemei
+    rows: int = 3
+    cols: int = 3
+    random_size: bool = False
+
 
 class NashEvaluationResponse(BaseModel):
     """Ce răspunde API-ul după evaluare."""

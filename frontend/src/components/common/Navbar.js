@@ -5,11 +5,8 @@ import "./Navbar.css";
 function Navbar() {
   return (
     <nav className="navbar">
-
       <h2 className="navbar-brand">SmarTest</h2>
-
       <ul className="navbar-links">
-
         <li>
           <NavLink
             to="/minmax"
@@ -43,6 +40,19 @@ function Navbar() {
           </NavLink>
         </li>
 
+        {/* Added RL Link */}
+        <li>
+          <NavLink
+            to="/rl"
+            className={({ isActive }) =>
+              isActive ? "nav-link active" : "nav-link"
+            }
+          >
+            RL
+          </NavLink>
+        </li>
+
+        {/* Added CSP Link */}
         <li>
           <NavLink
             to="/csp"
@@ -53,7 +63,6 @@ function Navbar() {
             CSP
           </NavLink>
         </li>
-
       </ul>
     </nav>
   );
