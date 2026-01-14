@@ -25,8 +25,8 @@ export const evaluateNashAnswer = (answerData) => {
 };
 
 // --- STRATEGY ENDPOINTS ---
-export const generateStrategyProblem = () => {
-  return api.post('/generate/strategy');
+export const generateStrategyProblem = (config = {}) => {
+  return api.post('/generate/strategy', config);
 };
 export const evaluateStrategyAnswer = (answerData) => {
   return api.post('/evaluate/strategy', answerData);
