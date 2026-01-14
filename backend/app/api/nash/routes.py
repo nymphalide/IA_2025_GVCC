@@ -44,37 +44,22 @@ async def generate_nash_problem(request: NashGenerateRequest):
 
 @router.post("/evaluate/nash", response_model=NashEvaluationResponse)
 async def evaluate_nash_answer(user_answer: NashAnswerRequest):
-    # During evaluation, we only need the correct answer (equilibria).
-    # We pass params=None because the seed alone will reconstruct
-    # the RANDOM size.
-    # IMPORTANT: If the user manually selected a size, the Seed logic in solver.py
-    # needs to handle that.
-    # However, standard PRNG behavior implies that if we consumed randomness
-    # to pick the size in Generate, we must consume it again in Evaluate.
-    # See solver.py logic: "if is_random: use seed".
+    """
+    Evaluează răspunsul utilizatorului.
+    Reconstruiește problema folosind Seed-ul + Parametrii trimiși de frontend.
+    """
 
-    # REVISION for Reproducibility with Custom Inputs:
-    # If the user FORCED a size (e.g. 4x4), the random generator did NOT
-    # consume numbers for the size. But in Evaluate, we don't know that.
-    # FIX: Ideally, the seed encodes everything. But simple seeds don't.
-    # For this MVP, we will rely on the fact that `generate_and_solve_nash`
-    # handles the "random consumption" consistent with the seed flow.
-    # If the user chose a custom size, the Matrix generation starts immediately.
-    # If the user chose random, the Size generation consumes 2 ints, THEN Matrix.
-    # This might cause a de-sync if we don't know which mode was used.
+    # Reconstruim parametrii originali
+    reconstruction_params = {
+        "rows": user_answer.rows,
+        "cols": user_answer.cols,
+        "random_size": user_answer.random_size
+    }
 
-    # TRICK: To save time without complex state, we will assume for evaluation
-    # that the seed produces the matrix. If customization desyncs this,
-    # we would need to store metadata.
-    # For now, let's assume the solver uses the seed robustly.
-
-    # (In a production app, we would send the config back in the AnswerRequest).
-
-    # Let's rely on the seed.
-
+    # Regenerăm soluția corectă folosind aceeași configurație
     _, correct_equilibria, _ = generate_and_solve_nash(
         seed=user_answer.problem_seed,
-        params={"random_size": True}  # Fallback to seed-based generation for consistency
+        params=reconstruction_params
     )
 
     return evaluate_nash(
