@@ -6,30 +6,28 @@ const api = axios.create({
   timeout: 5000, 
 });
 
-// --- MINMAX ENDPOINTS ---
-export const generateMinMaxProblem = () => {
-  return api.post('/generate/minmax');
-};
+// ... (MinMax, Nash, Strategy existing code) ...
 
+// --- MINMAX ENDPOINTS ---
+export const generateMinMaxProblem = (config = {}) => {
+  return api.post('/generate/minmax', config);
+};
 export const evaluateMinMaxAnswer = (answerData) => {
   return api.post('/evaluate/minmax', answerData);
 };
 
-// --- NASH ENDPOINTS (MODIFIED) ---
+// --- NASH ENDPOINTS ---
 export const generateNashProblem = (config = {}) => {
-    // config example: { rows: 3, cols: 3, random_size: false }
-    return api.post('/generate/nash', config); 
+    return api.post('/generate/nash', config);
 };
-
 export const evaluateNashAnswer = (answerData) => {
     return api.post('/evaluate/nash', answerData);
 };
 
 // --- STRATEGY ENDPOINTS ---
-export const generateStrategyProblem = () => {
-  return api.post('/generate/strategy');
+export const generateStrategyProblem = (config = {}) => {
+  return api.post('/generate/strategy', config);
 };
-
 export const evaluateStrategyAnswer = (answerData) => {
   return api.post('/evaluate/strategy', answerData);
 };
@@ -40,6 +38,13 @@ export const generateRLProblem = (config) => {
 
 export const evaluateRLAnswer = (answerData) => {
   return api.post('/evaluate/rl', answerData);
+// --- CSP ENDPOINTS (NEW) ---
+export const generateCspProblem = (config = {}) => {
+    return api.post('/generate/csp', config);
+};
+
+export const evaluateCspAnswer = (answerData) => {
+    return api.post('/evaluate/csp', answerData);
 };
 
 export default api;

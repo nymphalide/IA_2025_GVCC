@@ -1,5 +1,5 @@
 /* --- Global Container --- */
-.minmax-container {
+.csp-container {
     max-width: 950px;
     margin: 0 auto;
     padding: 20px;
@@ -15,7 +15,7 @@
     font-weight: 700;
 }
   
-/* --- Configuration Panel (Top Bar) --- */
+/* --- Configuration Panel --- */
 .config-panel {
     background: #ffffff;
     padding: 15px 25px;
@@ -24,57 +24,46 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    /* Centrat orizontal */
-    flex-wrap: nowrap;       /* Forțăm un singur rând */
+    flex-wrap: wrap; 
     gap: 30px;
-    /* Spațiu generos între grupuri */
     margin-bottom: 30px;
     border: 1px solid #eef2f5;
 }
   
 .config-group {
     display: flex;
+    flex-direction: row;
     align-items: center;
     gap: 15px;
     white-space: nowrap;
-    /* Previne ruperea textului */
 }
 
 .config-group label {
     font-weight: 600;
     color: #555;
+    font-size: 0.9rem;
     cursor: pointer;
     display: flex;
     align-items: center;
-    gap: 8px;
-    font-size: 0.95rem;
+    gap: 6px;
+    margin: 0;
 }
   
 .config-inputs {
     display: flex;
-    gap: 10px;
     align-items: center;
 }
-  
-.config-inputs input[type="number"], 
+
 .config-inputs select {
-    width: 80px;
     padding: 6px 10px;
     border: 1px solid #ddd;
     border-radius: 6px;
-    font-size: 1rem;
-    text-align: center;
-    transition: border-color 0.2s;
+    font-size: 0.9rem;
     background-color: #fff;
     color: #333;
+    min-width: 80px;
 }
-  
-.config-inputs input[type="number"]:focus,
-.config-inputs select:focus {
-    border-color: #3498db;
-    outline: none;
-}
-  
+
 .generate-btn {
     background: linear-gradient(135deg, #3498db 0%, #2980b9 100%);
     color: white;
@@ -86,18 +75,11 @@
     cursor: pointer;
     transition: transform 0.1s, box-shadow 0.2s;
     box-shadow: 0 4px 6px rgba(52, 152, 219, 0.3);
-    white-space: nowrap;
 }
   
 .generate-btn:hover:not(:disabled) {
     transform: translateY(-1px);
     box-shadow: 0 6px 8px rgba(52, 152, 219, 0.4);
-}
-  
-.generate-btn:disabled {
-    background: #bdc3c7;
-    cursor: not-allowed;
-    box-shadow: none;
 }
   
 /* --- Error Messages --- */
@@ -111,7 +93,7 @@
     border: 1px solid #fecaca;
 }
   
-/* --- Game Workspace (The Main Card) --- */
+/* --- Game Workspace --- */
 .game-workspace {
     display: flex;
     flex-direction: column;
@@ -122,122 +104,107 @@
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
 }
   
-/* --- Tree Section --- */
-.tree-section {
+/* MODIFICARE: Flex column centrat pentru a replica layout-ul Nash */
+.description-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     text-align: center;
 }
 
-/* MODIFICAT: Eliminat culoarea specifică pentru a folosi negrul implicit (#333), la fel ca la Nash */
-.tree-section h3 {
+/* MODIFICARE: Ajustat margini pentru consistență */
+.description-section h3 {
     margin-top: 0;
-    /* color: #374151;  <-- ELIMINAT pentru a fi identic cu Nash */
     margin-bottom: 1rem;
+    color: #374151;
 }
 
+/* MODIFICARE: Adăugat max-width */
 .instruction {
     font-size: 1.05rem;
     color: #5f6368;
     line-height: 1.6;
-    max-width: 750px;
     margin-bottom: 15px;
+    white-space: pre-wrap;
+    max-width: 750px;
 }
-  
+
+/* MODIFICARE: Adăugat max-width și margin-bottom explicit */
 .instruction-req {
     font-size: 1.1rem;
     color: #202124;
     font-weight: 600;
+    white-space: pre-wrap;
     margin-bottom: 25px;
     max-width: 750px;
-    line-height: 1.5;
-}
-  
-.image-wrapper {
-    margin-top: 20px;
-    padding: 10px;
-    border: 2px solid #ecf0f1;
-    border-radius: 12px;
-    background: #fdfdfd;
 }
 
-.tree-image {
-    max-width: 100%;
-    height: auto;
-    border-radius: 8px;
-}
-
-.json-toggle {
-    margin-bottom: 15px;
-}
-
-.secondary-btn {
-    background-color: #f0f2f5;
-    color: #555;
-    padding: 8px 16px;
-    border: 1px solid #dcdcdc;
-    border-radius: 6px;
+.note-text {
     font-size: 0.9rem;
-    transition: background 0.2s;
+    color: #d35400;
+    background: #fff4e6;
+    padding: 10px;
+    border-radius: 6px;
+    display: inline-block;
+    margin-top: 0;
+    white-space: pre-wrap;
 }
 
-.secondary-btn:hover {
-    background-color: #e4e6e9;
+/* --- Graph Visualization --- */
+.graph-viz {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
 }
 
-.json-viewer {
-    text-align: left;
-    background: #f8f9fa;
-    padding: 15px;
+.graph-svg {
+    border: 1px solid #eee;
+    background-color: #fcfcfc;
     border-radius: 8px;
-    overflow-x: auto;
-    font-size: 0.85rem;
-    max-height: 250px;
-    border: 1px solid #e9ecef;
-    margin-top: 10px;
 }
-  
+
 /* --- Answer Form --- */
-.answer-form {
+.csp-form {
     background: #f9fafb;
     padding: 25px;
     border-radius: 12px;
     border: 1px dashed #d1d5db;
     display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-    gap: 25px;
-    align-items: flex-end;
-    /* Aliniem butonul cu input-urile */
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
 }
-  
-.form-group {
+
+.inputs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    width: 100%;
+}
+
+.input-card {
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
     display: flex;
     flex-direction: column;
-    gap: 8px;
+    align-items: center;
+    gap: 10px;
 }
 
-.form-group label {
+.input-card label {
     font-weight: 600;
     color: #374151;
-    font-size: 0.95rem;
 }
 
-.form-group input {
-    padding: 10px 15px;
-    border: 1px solid #d1d5db;
-    border-radius: 8px;
-    font-size: 1rem;
-    width: 200px;
-    transition: border-color 0.2s;
+.input-card select {
+    width: 100%;
+    padding: 8px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
 }
 
-.form-group input:focus {
-    border-color: #10b981;
-    outline: none;
-}
-  
 .submit-btn {
     background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     color: white;
@@ -248,17 +215,15 @@
     font-weight: 600;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
-    transition: transform 0.1s;
-    height: 46px; /* Pentru aliniere vizuală cu input-urile */
 }
-  
+
 .submit-btn:hover:not(:disabled) {
     transform: translateY(-2px);
     box-shadow: 0 6px 10px rgba(16, 185, 129, 0.4);
 }
-  
+
 /* --- Results --- */
-.evaluation-result {
+.csp-result {
     margin-top: 30px;
     padding: 25px;
     border-radius: 12px;
@@ -267,36 +232,15 @@
 }
   
 @keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px);
-}
+    from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
 }
-  
-.result-success {
-    background: #ecfdf5;
-    border: 1px solid #a7f3d0;
-    color: #065f46;
-}
-  
-.result-fail {
-    background: #fef2f2;
-    border: 1px solid #fecaca;
-    color: #991b1b;
-}
-  
-.result-partial {
-    background: #fffbeb;
-    border: 1px solid #fde68a;
-    color: #92400e;
-}
-  
+
+.result-success { background: #ecfdf5; border: 1px solid #a7f3d0; color: #065f46; }
+.result-fail { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+.result-partial { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+
 .score-badge {
-    display: inline-block;
     font-size: 2rem;
     font-weight: 800;
-    margin-bottom: 10px;
-}
-
-.explanation {
-    font-size: 1.1rem;
 }
