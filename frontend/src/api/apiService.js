@@ -48,8 +48,8 @@ export const evaluateCspAnswer = (answerData) => {
     return api.post('/evaluate/csp', answerData);
 };
 
-export const generateBayesProblem = (config = {}) => {
-  return api.get('/bayes/generate', { params: config });
+export const generateBayesProblem = (payload = {}) => {
+  return api.post('/bayes/generate', payload);
 };
 
 export const evaluateBayesAnswer = (answerData) => {

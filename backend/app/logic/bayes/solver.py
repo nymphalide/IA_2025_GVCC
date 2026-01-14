@@ -2,14 +2,19 @@ import random
 from app.logic.common.seed import set_seed
 
 
-def generate_bayes_problem(seed: int | None = None):
+def generate_bayes_problem(seed: int | None = None,
+    custom_priors: dict | None = None):
+
     if seed is not None:
         set_seed(seed)
         random.seed(seed)
 
-    # Prior probabilities
-    p_rain = round(random.uniform(0.2, 0.6), 2)
-    p_sprinkler = round(random.uniform(0.2, 0.6), 2)
+    if custom_priors:
+        p_rain = round(custom_priors["p_rain"], 2)
+        p_sprinkler = round(custom_priors["p_sprinkler"], 2)
+    else:
+        p_rain = round(random.uniform(0.2, 0.6), 2)
+        p_sprinkler = round(random.uniform(0.2, 0.6), 2)
 
     # Conditional probabilities P(W | R, S)
     p_w_rs = round(random.uniform(0.8, 0.99), 2)

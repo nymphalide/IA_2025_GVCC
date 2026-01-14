@@ -12,6 +12,10 @@ function BayesProblem() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState(null);
 
+  const [isRandom, setIsRandom] = useState(true);
+  const [pRain, setPRain] = useState("");
+  const [pSprinkler, setPSprinkler] = useState("");
+
   const handleGenerate = async () => {
     setIsLoading(true);
     setError(null);
@@ -20,7 +24,14 @@ function BayesProblem() {
     setAnswer("");
 
     try {
-      const res = await generateBayesProblem();
+      const payload = {
+        random: isRandom,
+        p_rain: isRandom ? null : parseFloat(pRain),
+        p_sprinkler: isRandom ? null : parseFloat(pSprinkler)
+      };
+
+      const res = await generateBayesProblem(payload);
+
       setProblem(res.data);
     } catch (err) {
       console.error(err);
@@ -69,6 +80,43 @@ function BayesProblem() {
 
       {/* --- GENERARE --- */}
       <div className="config-panel">
+        <label>
+          <input
+            type="checkbox"
+            checked={isRandom}
+            onChange={() => setIsRandom(!isRandom)}
+          />
+          Random
+        </label>
+
+        {!isRandom && (
+          <>
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              max="1"
+              placeholder="Ploaie"
+              value={pRain}
+              onChange={(e) => {
+                const v = Math.min(1, Math.max(0, e.target.value));
+                setPRain(v);
+              }}
+            />
+            <input
+              type="number"
+              step="0.01"
+              min="0"
+              max="1"
+              placeholder="Stropitoare"
+              value={pSprinkler}
+              onChange={(e) => {
+              const v = Math.min(1, Math.max(0, e.target.value));
+              setPSprinkler(v);
+            }}
+            />
+          </>
+        )}
         <button
           onClick={handleGenerate}
           disabled={isLoading}
