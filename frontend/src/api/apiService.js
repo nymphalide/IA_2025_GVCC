@@ -37,7 +37,8 @@ export const generateRLProblem = (config) => {
 };
 
 export const evaluateRLAnswer = (answerData) => {
-  return api.post('/evaluate/rl', answerData);
+  return api.post('/evaluate/rl', answerData)
+};
 // --- CSP ENDPOINTS (NEW) ---
 export const generateCspProblem = (config = {}) => {
     return api.post('/generate/csp', config);
