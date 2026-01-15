@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { generateMinMaxProblem, evaluateMinMaxAnswer } from '../../api/apiService';
+import React, {useState, useEffect} from 'react';
+import {generateMinMaxProblem, evaluateMinMaxAnswer} from '../../api/apiService';
 import './MinMax.css';
 
-function MinMaxProblem() {
+function MinMaxProblem({autoGenerate = false, seed = null}) {
     // Starea pentru problema primită de la API
     const [problem, setProblem] = useState(null);
     // { seed, tree, text, ... }
@@ -11,9 +11,9 @@ function MinMaxProblem() {
     // Acestea sunt valorile din controalele UI (ce vede utilizatorul acum)
     const [config, setConfig] = useState({
         randomDepth: true,
-        depth: 3, 
+        depth: 3,
         randomRoot: true,
-        rootType: 'MAX' 
+        rootType: 'MAX'
     });
 
     // --- GENERATION CONFIG STATE ---
@@ -22,7 +22,7 @@ function MinMaxProblem() {
     const [lastGenConfig, setLastGenConfig] = useState(null);
 
     // Starea pentru răspunsul utilizatorului
-    const [answer, setAnswer] = useState({ root_value: '', visited_nodes: '' });
+    const [answer, setAnswer] = useState({root_value: '', visited_nodes: ''});
 
     // Starea pentru rezultatul evaluării
     const [evaluation, setEvaluation] = useState(null);
@@ -37,25 +37,31 @@ function MinMaxProblem() {
      * Trimite parametrii configurați către backend.
      */
     const handleGenerate = async () => {
+
+
         setIsLoading(true);
         setError(null);
         setProblem(null);
         setEvaluation(null);
-        setAnswer({ root_value: '', visited_nodes: '' }); 
+        setAnswer({root_value: '', visited_nodes: ''});
 
         try {
             const isMaxPlayer = config.rootType === 'MAX';
 
             const payload = {
+                seed: seed ?? Math.floor(Math.random() * 1_000_000),
                 random_depth: config.randomDepth,
-                depth: config.randomDepth ? null : parseInt(config.depth, 10),
+                depth: config.randomDepth
+                    ? null
+                    : Math.max(1, parseInt(config.depth, 10)),
                 random_root: config.randomRoot,
                 is_maximizing_player: config.randomRoot ? null : isMaxPlayer
             };
 
+
             const response = await generateMinMaxProblem(payload);
             setProblem(response.data);
-            
+
             // Salvăm configurația folosită pentru a o trimite înapoi la evaluare
             setLastGenConfig(payload);
 
@@ -66,6 +72,12 @@ function MinMaxProblem() {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (autoGenerate) {
+            handleGenerate();
+        }
+    }, [autoGenerate]);
 
     /**
      * Apelată la trimiterea formularului de răspuns.
@@ -86,7 +98,7 @@ function MinMaxProblem() {
                 problem_seed: problem.seed,
                 root_value: parseInt(answer.root_value, 10),
                 visited_nodes: parseInt(answer.visited_nodes, 10),
-                
+
                 // --- TRIMITERE PARAMETRI PENTRU RECONSTRUCȚIE ---
                 generated_random_depth: lastGenConfig.random_depth,
                 generated_depth: lastGenConfig.depth,
@@ -105,7 +117,7 @@ function MinMaxProblem() {
     };
 
     const handleInputChange = (e) => {
-        const { name, value } = e.target;
+        const {name, value} = e.target;
         setAnswer(prev => ({
             ...prev,
             [name]: value
@@ -124,65 +136,78 @@ function MinMaxProblem() {
             <h1 className="title">Problemă MinMax cu Alpha-Beta</h1>
 
             {/* --- Secțiunea 1: Configurare & Generare --- */}
-            <div className="config-panel">
-                
-                {/* 1. Control Adâncime */}
-                <div className="config-group">
-                    <label>
-                        <input 
-                            type="checkbox" 
-                            checked={config.randomDepth}
-                            onChange={(e) => setConfig({...config, randomDepth: e.target.checked})}
-                        />
-                        Adâncime Aleatoare
-                    </label>
 
-                    {!config.randomDepth && (
-                        <div className="config-inputs">
-                            <input 
-                                type="number" 
-                                min="0" 
-                                max="12"
-                                value={config.depth}
-                                onChange={(e) => setConfig({...config, depth: e.target.value})}
+            {/* --- Secțiunea 1: Configurare & Generare --- */}
+            {!autoGenerate && (
+                <div className="config-panel">
+
+                    {/* 1. Control Adâncime */}
+                    <div className="config-group">
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={config.randomDepth}
+                                onChange={(e) =>
+                                    setConfig({...config, randomDepth: e.target.checked})
+                                }
                             />
-                        </div>
-                    )}
+                            Adâncime Aleatoare
+                        </label>
+
+                        {!config.randomDepth && (
+                            <div className="config-inputs">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max="12"
+                                    value={config.depth}
+                                    onChange={(e) =>
+                                        setConfig({...config, depth: e.target.value})
+                                    }
+                                />
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 2. Control Tip Rădăcină */}
+                    <div className="config-group">
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={config.randomRoot}
+                                onChange={(e) =>
+                                    setConfig({...config, randomRoot: e.target.checked})
+                                }
+                            />
+                            Nod Rădăcină Aleator
+                        </label>
+
+                        {!config.randomRoot && (
+                            <div className="config-inputs">
+                                <select
+                                    value={config.rootType}
+                                    onChange={(e) =>
+                                        setConfig({...config, rootType: e.target.value})
+                                    }
+                                >
+                                    <option value="MAX">MAX</option>
+                                    <option value="MIN">MIN</option>
+                                </select>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* 3. Buton Generare */}
+                    <button
+                        onClick={handleGenerate}
+                        disabled={isLoading}
+                        className="generate-btn"
+                    >
+                        {isLoading ? 'Se procesează...' : 'Generează Problemă'}
+                    </button>
                 </div>
+            )}
 
-                {/* 2. Control Tip Rădăcină */}
-                <div className="config-group">
-                    <label>
-                        <input 
-                            type="checkbox" 
-                            checked={config.randomRoot}
-                            onChange={(e) => setConfig({...config, randomRoot: e.target.checked})}
-                        />
-                        Nod Rădăcină Aleator
-                    </label>
-
-                    {!config.randomRoot && (
-                        <div className="config-inputs">
-                            <select
-                                value={config.rootType}
-                                onChange={(e) => setConfig({...config, rootType: e.target.value})}
-                            >
-                                <option value="MAX">MAX</option>
-                                <option value="MIN">MIN</option>
-                            </select>
-                        </div>
-                    )}
-                </div>
-
-                {/* 3. Buton Generare */}
-                <button 
-                    onClick={handleGenerate} 
-                    disabled={isLoading} 
-                    className="generate-btn"
-                >
-                    {isLoading ? 'Se procesează...' : 'Generează Problemă'}
-                </button>
-            </div>
 
             {error && <p className="error-message">{error}</p>}
 
@@ -191,11 +216,11 @@ function MinMaxProblem() {
                 <div className="game-workspace">
                     <div className="tree-section">
                         <h3>{problem.text.title}</h3>
-                        
+
                         <p className="instruction">
                             {problem.text.description}
                         </p>
-                        
+
                         <p className="instruction-req">
                             {problem.text.requirement}
                         </p>

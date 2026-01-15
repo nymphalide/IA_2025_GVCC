@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { generateCspProblem, evaluateCspAnswer } from '../../api/apiService';
+import {generateCspProblem, evaluateCspAnswer} from '../../api/apiService';
 import './Csp.css';
+import React, {useState, useEffect} from 'react';
 
-function CspProblem() {
+function CspProblem({autoGenerate = false, seed = null}) {
     // UI State
     const [config, setConfig] = useState({
         randomGraph: true,
@@ -43,20 +43,25 @@ function CspProblem() {
 
         try {
             const payload = {
-                random_graph: config.randomGraph,
-                graph_size: config.randomGraph ? null : parseInt(config.graphSize),
-                random_algo: config.randomAlgo,
-                algorithm: config.randomAlgo ? null : config.algo,
-                random_prefill: config.randomPrefill,
-                prefill_level: config.randomPrefill ? null : config.prefill
+                seed: seed ?? Math.floor(Math.random() * 1_000_000),
+
+                random_graph: autoGenerate ? true : config.randomGraph,
+                graph_size: autoGenerate ? null : (config.randomGraph ? null : parseInt(config.graphSize)),
+
+                random_algo: autoGenerate ? true : config.randomAlgo,
+                algorithm: autoGenerate ? null : (config.randomAlgo ? null : config.algo),
+
+                random_prefill: autoGenerate ? true : config.randomPrefill,
+                prefill_level: autoGenerate ? null : (config.randomPrefill ? null : config.prefill)
             };
+
 
             const response = await generateCspProblem(payload);
             setProblem(response.data);
             setUsedConfig(payload);
-            
+
             setUserAnswers(response.data.assignments);
-            
+
         } catch (err) {
             console.error(err);
             setError("Eroare la generarea problemei CSP.");
@@ -65,8 +70,15 @@ function CspProblem() {
         }
     };
 
+    useEffect(() => {
+        if (autoGenerate) {
+            handleGenerate();
+        }
+    }, [autoGenerate]);
+
+
     const handleAnswerChange = (nodeId, color) => {
-        setUserAnswers(prev => ({ ...prev, [nodeId]: color }));
+        setUserAnswers(prev => ({...prev, [nodeId]: color}));
     };
 
     const handleSubmit = async () => {
@@ -86,7 +98,7 @@ function CspProblem() {
             const payload = {
                 problem_seed: problem.seed,
                 user_assignments: userAnswers,
-                generated_params: usedConfig 
+                generated_params: usedConfig
             };
 
             const response = await evaluateCspAnswer(payload);
@@ -119,8 +131,8 @@ function CspProblem() {
     const renderGraph = () => {
         if (!problem) return null;
 
-        const { nodes, edges } = problem.graph;
-        const scale = 3.5; 
+        const {nodes, edges} = problem.graph;
+        const scale = 3.5;
         const radius = 15;
 
         return (
@@ -129,7 +141,7 @@ function CspProblem() {
                     const n1 = nodes.find(n => n.id === e.source);
                     const n2 = nodes.find(n => n.id === e.target);
                     return (
-                        <line 
+                        <line
                             key={`edge-${idx}`}
                             x1={n1.x * scale} y1={n1.y * scale}
                             x2={n2.x * scale} y2={n2.y * scale}
@@ -140,16 +152,16 @@ function CspProblem() {
                 {nodes.map((n) => {
                     const isAssigned = userAnswers[n.id] !== undefined;
                     const fillColor = isAssigned ? colorMap[userAnswers[n.id]] : colorMap["Unknown"];
-                    
+
                     return (
                         <g key={`node-${n.id}`}>
-                            <circle 
+                            <circle
                                 cx={n.x * scale} cy={n.y * scale} r={radius}
                                 fill={fillColor}
                                 stroke="#2c3e50" strokeWidth="2"
                             />
-                            <text 
-                                x={n.x * scale} y={n.y * scale + 5} 
+                            <text
+                                x={n.x * scale} y={n.y * scale + 5}
                                 textAnchor="middle" fill={isAssigned ? "white" : "#333"}
                                 fontWeight="bold" fontSize="14px"
                                 style={{pointerEvents: 'none'}}
@@ -167,68 +179,74 @@ function CspProblem() {
         <div className="csp-container">
             {/* TERMINOLOGIE ACTUALIZATĂ AICI */}
             <h1 className="title">CSP: Problema Colorării Grafurilor</h1>
-            <div className="config-panel">
-                <div className="config-group">
-                    <label>
-                        <input 
-                            type="checkbox" 
-                            checked={config.randomGraph}
-                            onChange={(e) => setConfig({...config, randomGraph: e.target.checked})}
-                        />
-                        Graf Aleator
-                    </label>
-                    {!config.randomGraph && (
-                        <div className="config-inputs">
-                            <select value={config.graphSize} onChange={(e) => setConfig({...config, graphSize: e.target.value})}>
-                                <option value="5">5 Noduri</option>
-                                <option value="7">7 Noduri</option>
-                                <option value="10">10 Noduri</option>
-                            </select>
-                        </div>
-                    )}
+            {!autoGenerate && (
+
+                <div className="config-panel">
+                    <div className="config-group">
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={config.randomGraph}
+                                onChange={(e) => setConfig({...config, randomGraph: e.target.checked})}
+                            />
+                            Graf Aleator
+                        </label>
+                        {!config.randomGraph && (
+                            <div className="config-inputs">
+                                <select value={config.graphSize}
+                                        onChange={(e) => setConfig({...config, graphSize: e.target.value})}>
+                                    <option value="5">5 Noduri</option>
+                                    <option value="7">7 Noduri</option>
+                                    <option value="10">10 Noduri</option>
+                                </select>
+                            </div>
+                        )}
+                    </div>
+                    <div className="config-group">
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={config.randomAlgo}
+                                onChange={(e) => setConfig({...config, randomAlgo: e.target.checked})}
+                            />
+                            Algoritm Aleator
+                        </label>
+                        {!config.randomAlgo && (
+                            <div className="config-inputs">
+                                <select value={config.algo}
+                                        onChange={(e) => setConfig({...config, algo: e.target.value})}>
+                                    <option value="FC">FC</option>
+                                    <option value="MRV">MRV</option>
+                                    <option value="AC-3">AC-3</option>
+                                </select>
+                            </div>
+                        )}
+                    </div>
+                    <div className="config-group">
+                        <label>
+                            <input
+                                type="checkbox"
+                                checked={config.randomPrefill}
+                                onChange={(e) => setConfig({...config, randomPrefill: e.target.checked})}
+                            />
+                            Grad Completare Aleator
+                        </label>
+                        {!config.randomPrefill && (
+                            <div className="config-inputs">
+                                <select value={config.prefill}
+                                        onChange={(e) => setConfig({...config, prefill: e.target.value})}>
+                                    <option value="LOW">Minim (~25%)</option>
+                                    <option value="MED">Mediu (~50%)</option>
+                                    <option value="HIGH">Extins (~75%)</option>
+                                </select>
+                            </div>
+                        )}
+                    </div>
+                    <button onClick={handleGenerate} disabled={isLoading} className="generate-btn">
+                        {isLoading ? 'Se procesează...' : 'Generează Problemă'}
+                    </button>
                 </div>
-                <div className="config-group">
-                    <label>
-                        <input 
-                            type="checkbox" 
-                            checked={config.randomAlgo}
-                            onChange={(e) => setConfig({...config, randomAlgo: e.target.checked})}
-                        />
-                        Algoritm Aleator
-                    </label>
-                    {!config.randomAlgo && (
-                        <div className="config-inputs">
-                            <select value={config.algo} onChange={(e) => setConfig({...config, algo: e.target.value})}>
-                                <option value="FC">FC</option>
-                                <option value="MRV">MRV</option>
-                                <option value="AC-3">AC-3</option>
-                            </select>
-                        </div>
-                    )}
-                </div>
-                <div className="config-group">
-                    <label>
-                        <input 
-                            type="checkbox" 
-                            checked={config.randomPrefill}
-                            onChange={(e) => setConfig({...config, randomPrefill: e.target.checked})}
-                        />
-                        Grad Completare Aleator
-                    </label>
-                    {!config.randomPrefill && (
-                        <div className="config-inputs">
-                            <select value={config.prefill} onChange={(e) => setConfig({...config, prefill: e.target.value})}>
-                                <option value="LOW">Minim (~25%)</option>
-                                <option value="MED">Mediu (~50%)</option>
-                                <option value="HIGH">Extins (~75%)</option>
-                            </select>
-                        </div>
-                    )}
-                </div>
-                <button onClick={handleGenerate} disabled={isLoading} className="generate-btn">
-                    {isLoading ? 'Se procesează...' : 'Generează Problemă'}
-                </button>
-            </div>
+            )}
             {error && <p className="error-message">{error}</p>}
             {problem && (
                 <div className="game-workspace">
@@ -246,11 +264,11 @@ function CspProblem() {
                         <div className="inputs-grid">
                             {problem.all_variables.map(nodeId => {
                                 const isPreassigned = problem.assignments[nodeId] !== undefined;
-                                if (isPreassigned) return null; 
+                                if (isPreassigned) return null;
                                 return (
                                     <div key={nodeId} className="input-card">
                                         <label>Nod {nodeId}</label>
-                                        <select 
+                                        <select
                                             value={userAnswers[nodeId] || ""}
                                             onChange={(e) => handleAnswerChange(nodeId, e.target.value)}
                                         >

@@ -1,8 +1,8 @@
-import React, { useState } from 'react';
-import { generateRLProblem, evaluateRLAnswer } from '../../api/apiService';
+import React, {useState, useEffect} from 'react';
+import {generateRLProblem, evaluateRLAnswer} from '../../api/apiService';
 import './RL.css';
 
-function RLProblem() {
+function RLProblem({autoGenerate = false, seed = null}) {
     const [problem, setProblem] = useState(null);
     const [config, setConfig] = useState({
         type: 'value_iteration', // 'value_iteration' or 'q_learning'
@@ -21,9 +21,23 @@ function RLProblem() {
         setEvaluation(null);
         setProblem(null);
         setUserAnswer('');
-        
+
         try {
-            const res = await generateRLProblem(config);
+            const payload = {
+                seed: seed ?? Math.floor(Math.random() * 1_000_000),
+
+                // dacă suntem în test → random by default
+                type: autoGenerate ? 'value_iteration' : config.type,
+
+                rows: autoGenerate ? undefined : config.rows,
+                cols: autoGenerate ? undefined : config.cols,
+                gamma: autoGenerate ? undefined : config.gamma,
+                step_reward: autoGenerate ? undefined : config.step_reward,
+                alpha: autoGenerate ? undefined : config.alpha,
+            };
+
+            const res = await generateRLProblem(payload);
+
             setProblem(res.data);
         } catch (err) {
             console.error(err);
@@ -33,21 +47,30 @@ function RLProblem() {
         }
     };
 
+    useEffect(() => {
+        if (autoGenerate) {
+            handleGenerate();
+        }
+    }, [autoGenerate]);
+
+
     const handleEvaluate = async () => {
         if (!problem || !userAnswer) return;
-        
+
         try {
             // --- MODIFICARE AICI: Trimitem toți parametrii de fizică ---
             const payload = {
                 problem_seed: problem.seed,
-                problem_type: config.type,
+                problem_type: problem.problem_type, // ← CRUCIAL
                 user_value: parseFloat(userAnswer),
-                rows: config.rows,
-                cols: config.cols,
-                gamma: config.gamma,
-                step_reward: config.step_reward,
+
+                rows: problem.grid?.rows,
+                cols: problem.grid?.cols,
+                gamma: problem.grid?.gamma,
+                step_reward: problem.grid?.step_reward,
                 alpha: config.alpha
             };
+
 
             const res = await evaluateRLAnswer(payload);
             setEvaluation(res.data);
@@ -64,8 +87,8 @@ function RLProblem() {
     // Helper pt randarea grilei
     const renderGrid = () => {
         if (!problem || !problem.grid) return null;
-        
-        const { rows, cols, walls, terminals } = problem.grid;
+
+        const {rows, cols, walls, terminals} = problem.grid;
         let gridRender = [];
 
         // Convert walls list to Set for O(1) lookup
@@ -110,73 +133,75 @@ function RLProblem() {
             <h1 className="title">Reinforcement Learning</h1>
 
             {/* --- Configuration Panel --- */}
-            <div className="rl-config-panel">
-                <div className="config-group">
-                    <label>Tip Problemă</label>
-                    <select 
-                        className="styled-select"
-                        value={config.type} 
-                        onChange={e => setConfig({...config, type: e.target.value})}
-                    >
-                        <option value="value_iteration">Value Iteration (MDP)</option>
-                        <option value="q_learning">Q-Learning Update</option>
-                    </select>
-                </div>
-                
-                {config.type === 'value_iteration' && (
-                    <>
-                        <div className="config-group">
-                            <label>Gamma (γ)</label>
-                            <input 
-                                className="styled-input"
-                                type="number" 
-                                step="0.1" 
-                                min="0" max="1"
-                                value={config.gamma} 
-                                onChange={e=>setConfig({...config, gamma: parseFloat(e.target.value)})}
-                            />
-                        </div>
-                        <div className="config-group">
-                            <label>Living Reward</label>
-                            <input 
-                                className="styled-input"
-                                type="number" 
-                                step="0.01" 
-                                value={config.step_reward} 
-                                onChange={e=>setConfig({...config, step_reward: parseFloat(e.target.value)})}
-                            />
-                        </div>
-                    </>
-                )}
-
-                {/* Optional: Add Alpha input for Q-Learning if desired, currently using default 0.1 */}
-                {config.type === 'q_learning' && (
-                     <div className="config-group">
-                        <label>Alpha (α)</label>
-                        <input 
-                            className="styled-input"
-                            type="number" 
-                            step="0.1" 
-                            min="0" max="1"
-                            value={config.alpha} 
-                            onChange={e=>setConfig({...config, alpha: parseFloat(e.target.value)})}
-                        />
+            {!autoGenerate && (
+                <div className="rl-config-panel">
+                    <div className="config-group">
+                        <label>Tip Problemă</label>
+                        <select
+                            className="styled-select"
+                            value={config.type}
+                            onChange={e => setConfig({...config, type: e.target.value})}
+                        >
+                            <option value="value_iteration">Value Iteration (MDP)</option>
+                            <option value="q_learning">Q-Learning Update</option>
+                        </select>
                     </div>
-                )}
 
-                <button className="generate-btn" onClick={handleGenerate} disabled={isLoading}>
-                    {isLoading ? "Se generează..." : "Generează Problemă"}
-                </button>
-            </div>
+                    {config.type === 'value_iteration' && (
+                        <>
+                            <div className="config-group">
+                                <label>Gamma (γ)</label>
+                                <input
+                                    className="styled-input"
+                                    type="number"
+                                    step="0.1"
+                                    min="0" max="1"
+                                    value={config.gamma}
+                                    onChange={e => setConfig({...config, gamma: parseFloat(e.target.value)})}
+                                />
+                            </div>
+                            <div className="config-group">
+                                <label>Living Reward</label>
+                                <input
+                                    className="styled-input"
+                                    type="number"
+                                    step="0.01"
+                                    value={config.step_reward}
+                                    onChange={e => setConfig({...config, step_reward: parseFloat(e.target.value)})}
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    {/* Optional: Add Alpha input for Q-Learning if desired, currently using default 0.1 */}
+                    {config.type === 'q_learning' && (
+                        <div className="config-group">
+                            <label>Alpha (α)</label>
+                            <input
+                                className="styled-input"
+                                type="number"
+                                step="0.1"
+                                min="0" max="1"
+                                value={config.alpha}
+                                onChange={e => setConfig({...config, alpha: parseFloat(e.target.value)})}
+                            />
+                        </div>
+                    )}
+
+                    <button className="generate-btn" onClick={handleGenerate} disabled={isLoading}>
+                        {isLoading ? "Se generează..." : "Generează Problemă"}
+                    </button>
+                </div>
+            )}
 
             {/* --- Main Workspace --- */}
             {problem && (
                 <div className="game-workspace">
                     <h2 className="problem-title">{problem.text.title}</h2>
-                    
+
                     {/* Render Grid only for Value Iteration */}
                     {config.type === 'value_iteration' && renderGrid()}
-                    
+
                     <p className="instruction" style={{whiteSpace: 'pre-line'}}>
                         {problem.text.description}
                     </p>
@@ -187,10 +212,10 @@ function RLProblem() {
                     <div className="answer-section">
                         <label style={{fontWeight: '600', color: '#555'}}>Răspunsul tău (valoare numerică):</label>
                         <div className="input-wrapper">
-                            <input 
+                            <input
                                 className="answer-input"
-                                type="number" 
-                                step="0.001" 
+                                type="number"
+                                step="0.001"
                                 placeholder="ex: 0.76"
                                 value={userAnswer}
                                 onChange={(e) => setUserAnswer(e.target.value)}

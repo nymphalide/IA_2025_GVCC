@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
 import { generateStrategyProblem, evaluateStrategyAnswer } from '../../api/apiService';
 import './Strategy.css';
+import React, { useState, useEffect } from 'react';
 
-function StrategyProblem() {
+
+function StrategyProblem({ autoGenerate = false, seed = null }) {
     const [problem, setProblem] = useState(null);
 
     // --- CONFIG STATE (ca la MinMax / Nash) ---
@@ -40,18 +41,21 @@ function StrategyProblem() {
 
         try {
             const payload = {
-                random_problem: config.randomProblem,
-                problem_type: config.randomProblem ? null : config.problemType,
+    seed: seed ?? Math.floor(Math.random() * 1_000_000),
 
-                random_instance: config.randomInstance,
+    random_problem: autoGenerate ? true : config.randomProblem,
+    problem_type: autoGenerate ? null : (config.randomProblem ? null : config.problemType),
 
-                n: config.randomInstance ? null : parseInt(config.n, 10),
-                board_size: config.randomInstance ? null : parseInt(config.boardSize, 10),
-                vertices: config.randomInstance ? null : parseInt(config.vertices, 10),
-                density: config.randomInstance ? null : parseFloat(config.density),
-                n_disks: config.randomInstance ? null : parseInt(config.nDisks, 10),
-                n_pegs: config.randomInstance ? null : parseInt(config.nPegs, 10),
-            };
+    random_instance: autoGenerate ? true : config.randomInstance,
+
+    n: autoGenerate ? null : (config.randomInstance ? null : parseInt(config.n, 10)),
+    board_size: autoGenerate ? null : (config.randomInstance ? null : parseInt(config.boardSize, 10)),
+    vertices: autoGenerate ? null : (config.randomInstance ? null : parseInt(config.vertices, 10)),
+    density: autoGenerate ? null : (config.randomInstance ? null : parseFloat(config.density)),
+    n_disks: autoGenerate ? null : (config.randomInstance ? null : parseInt(config.nDisks, 10)),
+    n_pegs: autoGenerate ? null : (config.randomInstance ? null : parseInt(config.nPegs, 10)),
+};
+
 
             const response = await generateStrategyProblem(payload);
             setProblem(response.data);
@@ -66,6 +70,13 @@ function StrategyProblem() {
             setIsLoading(false);
         }
     };
+
+    useEffect(() => {
+    if (autoGenerate) {
+        handleGenerate();
+    }
+}, [autoGenerate]);
+
 
     const handleEvaluate = async () => {
         if (!problem || !selectedStrategy || !lastGenConfig) {
@@ -121,6 +132,7 @@ function StrategyProblem() {
 
 
         {/* --- CONFIG PANEL --- */}
+{!autoGenerate && (
 <div className="strategy-panel">
 
     {/* Problem random */}
@@ -183,6 +195,7 @@ function StrategyProblem() {
         {isLoading ? "Se generează..." : "Generează Problema"}
     </button>
 </div>
+)}
 
 {/* --- CUSTOM INPUTS --- */}
 {!config.randomProblem && !config.randomInstance && (
