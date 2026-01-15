@@ -2,21 +2,20 @@ import random
 from app.logic.common.seed import set_seed
 
 
-def generate_bayes_problem(seed: int | None = None,
-    custom_priors: dict | None = None):
+def generate_bayes_problem(seed: int | None = None, custom_priors: dict | None = None):
 
     if seed is not None:
         set_seed(seed)
         random.seed(seed)
 
-    if custom_priors:
+    if custom_priors is not None:
         p_rain = round(custom_priors["p_rain"], 2)
         p_sprinkler = round(custom_priors["p_sprinkler"], 2)
     else:
         p_rain = round(random.uniform(0.2, 0.6), 2)
         p_sprinkler = round(random.uniform(0.2, 0.6), 2)
 
-    # Conditional probabilities P(W | R, S)
+    # ⚠️ CONDITIONALS RĂMÂN RANDOM (CA ÎN VERSIUNEA TA ORIGINALĂ)
     p_w_rs = round(random.uniform(0.8, 0.99), 2)
     p_w_rns = round(random.uniform(0.5, 0.9), 2)
     p_w_nrs = round(random.uniform(0.5, 0.9), 2)
@@ -34,6 +33,7 @@ def generate_bayes_problem(seed: int | None = None,
     solution = compute_posterior(problem)
 
     return problem, solution
+
 
 
 def compute_posterior(p):

@@ -24,18 +24,12 @@ function BayesProblem({autoGenerate = false, seed = null}) {
         setAnswer("");
 
         try {
-            const payload = {
-                seed: seed ?? Math.floor(Math.random() * 1_000_000),
+           const payload = {
+            seed: seed ?? Math.floor(Math.random() * 1_000_000),
 
-                custom_priors: autoGenerate
-                    ? null
-                    : isRandom
-                        ? null
-                        : {
-                            p_rain: parseFloat(pRain),
-                            p_sprinkler: parseFloat(pSprinkler),
-                        },
-            };
+            p_rain: autoGenerate || isRandom ? null : parseFloat(pRain),
+            p_sprinkler: autoGenerate || isRandom ? null : parseFloat(pSprinkler),
+        };
 
             const res = await generateBayesProblem(payload);
             setProblem(res.data);

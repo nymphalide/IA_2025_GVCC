@@ -16,7 +16,7 @@ router = APIRouter()
 def generate_bayes(data: BayesGenerateRequest):
     custom_priors = None
 
-    if not data.random:
+    if data.p_rain is not None and data.p_sprinkler is not None:
         custom_priors = {
             "p_rain": data.p_rain,
             "p_sprinkler": data.p_sprinkler
