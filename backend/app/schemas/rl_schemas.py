@@ -22,12 +22,21 @@ class ProblemText(BaseModel):
 # --- Requests / Responses ---
 
 class RLGenerateRequest(BaseModel):
-    type: str = "value_iteration"  # "value_iteration" sau "q_learning"
+    type: str = "value_iteration"
+
+    # Value Iteration specific
     rows: int = 3
     cols: int = 4
+
+    # Parameters with Randomization options
     gamma: float = 0.9
+    random_gamma: bool = True  # <--- NEW
+
     step_reward: float = -0.04
-    alpha: float = 0.1  # Doar pt Q-Learning
+    random_step_reward: bool = True  # <--- NEW
+
+    alpha: float = 0.1
+    random_alpha: bool = True  # <--- NEW
 
 
 class RLProblemResponse(BaseModel):
@@ -39,20 +48,18 @@ class RLProblemResponse(BaseModel):
 
 
 class RLAnswerRequest(BaseModel):
-    """
-    Payload trimis la evaluare.
-    Trebuie să conțină TOȚI parametrii fizici pentru a recalcula corect valoarea (ex: Gamma=1.0).
-    """
     problem_seed: int
     problem_type: str
     user_value: float
 
-    # Parametri de reconstrucție
+    # Reconstruction parameters
     rows: int = 3
     cols: int = 4
-    gamma: float = 0.9
-    step_reward: float = -0.04
-    alpha: float = 0.1
+
+    # We pass the EXACT values used in the problem (resolved from random)
+    gamma: float
+    step_reward: float
+    alpha: float
 
 
 class RLEvaluationResponse(BaseModel):

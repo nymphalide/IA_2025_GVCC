@@ -34,17 +34,26 @@ async def gen_rl(request: RLGenerateRequest):
 async def eval_rl(request: RLAnswerRequest):
     """
     Evaluează răspunsul RL.
-    Folosește parametrii din request (ex: Gamma, Alpha) pentru a regenera valoarea corectă.
+    Folosește parametrii expliciți din request (Gamma, Alpha, Step Reward)
+    pentru a regenera valoarea corectă.
     """
 
     # Construim dicționarul de parametri pentru solver
+    # Aici trecem direct valorile (random=False) pentru că vrem RECONSTRUCȚIE exactă
     reconstruction_params = {
         "type": request.problem_type,
         "rows": request.rows,
         "cols": request.cols,
+
+        # Force specific values
         "gamma": request.gamma,
+        "random_gamma": False,
+
         "step_reward": request.step_reward,
-        "alpha": request.alpha
+        "random_step_reward": False,
+
+        "alpha": request.alpha,
+        "random_alpha": False
     }
 
     # Regenerăm problema
