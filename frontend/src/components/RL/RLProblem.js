@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useCallback} from 'react';
 import {generateRLProblem, evaluateRLAnswer} from '../../api/apiService';
 import './RL.css';
 
@@ -10,13 +10,22 @@ function RLProblem({autoGenerate = false, seed = null}) {
         cols: 4,
         gamma: 0.9,
         step_reward: -0.04,
-        alpha: 0.1 // Adăugat explicit în state pentru consistență
+        alpha: 0.1
     });
+
+    // MEMENTO PATTERN: Salvăm configurația folosită la generare
+    const [lastGenConfig, setLastGenConfig] = useState(null);
+
     const [userAnswer, setUserAnswer] = useState('');
     const [evaluation, setEvaluation] = useState(null);
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleGenerate = async () => {
+    /**
+     * Folosim useCallback pentru a memora funcția.
+     * Astfel, ea nu se va recrea la fiecare render decât dacă se schimbă dependențele (seed, config, autoGenerate).
+     * Acest lucru ne permite să o punem în useEffect fără a cauza bucle infinite sau warning-uri.
+     */
+    const handleGenerate = useCallback(async () => {
         setIsLoading(true);
         setEvaluation(null);
         setProblem(null);
@@ -26,7 +35,6 @@ function RLProblem({autoGenerate = false, seed = null}) {
             const payload = {
                 seed: seed ?? Math.floor(Math.random() * 1_000_000),
 
-                // dacă suntem în test → random by default
                 type: autoGenerate ? 'value_iteration' : config.type,
 
                 rows: autoGenerate ? undefined : config.rows,
@@ -39,38 +47,44 @@ function RLProblem({autoGenerate = false, seed = null}) {
             const res = await generateRLProblem(payload);
 
             setProblem(res.data);
+            setLastGenConfig(payload); 
+
         } catch (err) {
             console.error(err);
             alert("Eroare la generare (Verifică consola)");
         } finally {
             setIsLoading(false);
         }
-    };
+    }, [seed, config, autoGenerate]); // Dependențele funcției
 
+    // Acum putem include handleGenerate în dependențele useEffect fără probleme
     useEffect(() => {
         if (autoGenerate) {
             handleGenerate();
         }
-    }, [autoGenerate]);
+    }, [autoGenerate, handleGenerate]);
 
 
     const handleEvaluate = async () => {
         if (!problem || !userAnswer) return;
+        
+        if (!lastGenConfig) {
+            alert("Eroare internă: Configurația problemei s-a pierdut. Vă rugăm regenerați.");
+            return;
+        }
 
         try {
-            // --- MODIFICARE AICI: Trimitem toți parametrii de fizică ---
             const payload = {
                 problem_seed: problem.seed,
-                problem_type: problem.problem_type, // ← CRUCIAL
+                problem_type: lastGenConfig.type, 
                 user_value: parseFloat(userAnswer),
 
-                rows: problem.grid?.rows,
-                cols: problem.grid?.cols,
-                gamma: problem.grid?.gamma,
-                step_reward: problem.grid?.step_reward,
-                alpha: config.alpha
+                rows: lastGenConfig.rows,
+                cols: lastGenConfig.cols,
+                gamma: lastGenConfig.gamma,
+                step_reward: lastGenConfig.step_reward,
+                alpha: lastGenConfig.alpha
             };
-
 
             const res = await evaluateRLAnswer(payload);
             setEvaluation(res.data);
@@ -84,14 +98,12 @@ function RLProblem({autoGenerate = false, seed = null}) {
         if (e.key === 'Enter') handleEvaluate();
     };
 
-    // Helper pt randarea grilei
     const renderGrid = () => {
         if (!problem || !problem.grid) return null;
 
         const {rows, cols, walls, terminals} = problem.grid;
         let gridRender = [];
 
-        // Convert walls list to Set for O(1) lookup
         const wallsSet = new Set(walls.map(w => `${w[0]},${w[1]}`));
 
         for (let r = 0; r < rows; r++) {
@@ -132,7 +144,6 @@ function RLProblem({autoGenerate = false, seed = null}) {
         <div className="rl-container">
             <h1 className="title">Reinforcement Learning</h1>
 
-            {/* --- Configuration Panel --- */}
             {!autoGenerate && (
                 <div className="rl-config-panel">
                     <div className="config-group">
@@ -173,7 +184,6 @@ function RLProblem({autoGenerate = false, seed = null}) {
                         </>
                     )}
 
-                    {/* Optional: Add Alpha input for Q-Learning if desired, currently using default 0.1 */}
                     {config.type === 'q_learning' && (
                         <div className="config-group">
                             <label>Alpha (α)</label>
@@ -194,13 +204,11 @@ function RLProblem({autoGenerate = false, seed = null}) {
                 </div>
             )}
 
-            {/* --- Main Workspace --- */}
             {problem && (
                 <div className="game-workspace">
                     <h2 className="problem-title">{problem.text.title}</h2>
 
-                    {/* Render Grid only for Value Iteration */}
-                    {config.type === 'value_iteration' && renderGrid()}
+                    {problem.grid && renderGrid()}
 
                     <p className="instruction" style={{whiteSpace: 'pre-line'}}>
                         {problem.text.description}
@@ -227,7 +235,6 @@ function RLProblem({autoGenerate = false, seed = null}) {
                 </div>
             )}
 
-            {/* --- Results --- */}
             {evaluation && (
                 <div className={`rl-result ${evaluation.percentage === 100 ? 'rl-success' : 'rl-fail'}`}>
                     <span className="score-badge">{evaluation.percentage}%</span>
